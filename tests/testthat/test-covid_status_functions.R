@@ -231,6 +231,26 @@ test_that("recalc_sympdays works", {
 
 })
 
+test_that("run_removal_recalc works", {
+  
+  df <- list(id = 1:10,
+             current_risk = runif(10, 0, 1),
+             beta0 = rep(0, 10),
+             betaxs = runif(10, 0, 1),
+             hid_status = rep(0, 10),
+             presymp_days = rep(0,10),
+             symp_days = rep(1,10),
+             status = c(rep(0,5), rep(2, 5)),
+             new_status =c(rep(0,5), rep(2, 5)),
+             probability = runif(10, 0, 1))
+  timestep <- 1
+  expect_type(infection_length(df, timestep = timestep), "list")
+  expect_type(infection_length(df), "list")
+  
+  expect_true(all(run_removal_recalc(df, chance_recovery = 0.95)[["new_status"]] >= df$new_status))
+  
+})
+
 test_that("normalizer works", {
   expect_equal(normalizer(0.5, 0,1,0.5,1), 0)
   expect_equal(normalizer(0.75, 0,1,0.5,1), 0.5)

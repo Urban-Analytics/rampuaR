@@ -272,6 +272,20 @@ recalc_sympdays <- function(df, removed_cases){
   return(df)
 }
 
+#' Runs the pipeline for removing cases and stepping symptomatic and presymptomatic days
+#'
+#' @param df Input list of the function - output of the infection_length function
+#' @param chance_recovery Probability of an infected individual recovering
+#' @return An updated version of the input list with the status updates for those
+#' days left in stage = 0.
+#' @export
+run_removal_recalc <- function(df, chance_recovery = 0.95){
+  removed_cases <- determine_removal(df)
+  df_tmp <- removed(df, removed_cases, chance_recovery = 0.95)
+  df_tmp <- recalc_sympdays(df_tmp, removed_cases)
+  return(df_tmp)
+}
+
 
 #' Changing the spread of values to be between two set values
 #'

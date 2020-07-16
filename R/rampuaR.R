@@ -34,5 +34,8 @@
 #' @section recalc_sympdays:
 #' Recalculates number of symptomatic and presymptomatic days remaining
 #'
+#' @section run_removal_recalc
+#' Runs the pipeline for removing cases and stepping symptomatic and presymptomatic days
+#' 
 #' @docType package
 NULL
