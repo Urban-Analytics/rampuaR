@@ -14,8 +14,9 @@
 # 0 = susceptible
 # 1 = presymp
 # 2 = symp
-# 3 = recovered
-# 4 = dead
+# 3 = asymp
+# 4 = recovered
+# 5 = dead
 
 #########################################
 # calculate the probability of becoming infect
@@ -241,7 +242,7 @@ determine_removal <- function(df){
 #' @export
 removed <- function(df, removed_cases, chance_recovery = 0.95){
 
-  df$new_status[removed_cases] <- 3 + stats::rbinom(n = length(removed_cases),
+  df$new_status[removed_cases] <- 4 + stats::rbinom(n = length(removed_cases),
                                              size = 1,
                                              prob = (1-chance_recovery))
 
