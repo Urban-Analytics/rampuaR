@@ -1,4 +1,4 @@
-Package: rampua
+Package: rampuaR
 Type: Package
 Title: COVID Infection Model
 Version: 0.1.0
@@ -16,6 +16,6 @@ Imports:
     dplyr,
     stats, 
     utils
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.1
 Suggests: 
     testthat
