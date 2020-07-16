@@ -3,3 +3,9 @@
 .RData
 .Ruserdata
 .DS_Store
+
+# local .Rcheck directory
+**/*.Rcheck/*
+
+# any archived binaries
+**/*.tar.gz
