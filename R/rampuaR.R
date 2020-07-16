@@ -8,6 +8,9 @@
 #' Takes the output from the microsimulation model (microsim_model.py)
 #' and formats it for use in the infection model.
 #'
+#' @section sum_betas 
+#' Summing betas for use in COVID probability calculation
+#'
 #' @section covid_prob:
 #' Calculates the probability of each individual becoming a COVID case
 #' based on the current risk they accumulate in the microsim_model.py.
@@ -22,8 +25,14 @@
 #' @section infection_length:
 #' Assigns the number of days each COVID case is pre-symptomatic and symptomatic for.
 #'
+#' @section determine_removal:
+#' Determines which individuals should be removed
+#'
 #' @section removed:
 #' When individuals have reached the end of their infection they are removed.
+#'
+#' @section recalc_sympdays:
+#' Recalculates number of symptomatic and presymptomatic days remaining
 #'
 #' @docType package
 NULL

@@ -1,4 +1,4 @@
 library(testthat)
-library(rampua)
+library(rampuaR)
 
-test_check("rampua")
+test_check("rampuaR")

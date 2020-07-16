@@ -5,8 +5,7 @@
 ##################################
 # There are three main functions that
 # 1. calculate covid probability
-# 2. assign covid and take a random draw to determine how long a person is infectius
-# 2. assign covid and take a random draw to determine how long a person is infectius
+# 2. assign covid and take a random draw to determine how long a person is infectious
 # 3. take random draw to determine length of sickness and whether the person recovers or dies at the end
 ##################################
 
@@ -63,8 +62,7 @@ create_input <-
     return(df)
   }
 
-
-#' Calculating probabilities of becoming a COVID case
+#' Summing betas for use in COVID probability calculation
 #'
 #' Calculating probabilities of becoming a COVID case based on each individuals
 #' 'current_risk'
@@ -73,26 +71,41 @@ create_input <-
 #' @param betas List of betas associated with variables to be used in
 #' calculating probability of becoming a COVID case
 #' @param risk_cap_val The value at which current_risk will be capped
-#' @return An updated version of the input list with the probabilties updated
+#' @return the sum of betas
 #' @export
-covid_prob <- function(df, betas, risk_cap_val=NA) {
-
+sum_betas <- function(df, betas, risk_cap_val=NA) {
+  
   if(!is.na(risk_cap_val)){
     print(paste0(sum(df$current_risk > 5), " individuals with risk above  ", risk_cap_val))
     df$current_risk[df$current_risk>risk_cap_val] <- risk_cap_val
   }
-
+  
   beta_names <- names(betas)
-
+  
   if (all(!beta_names %in% names(df))) {
     print(paste0(
       beta_names[!beta_names %in% names(df)],
       " missing from df. They are not included in probabilities."
     ))
   }
-
+  
   beta_names <- beta_names[beta_names %in% names(df)]
   beta_out_sums <- df[[beta_names]] * betas[[beta_names]]
+  
+  return(beta_out_sums)
+}
+
+#' Calculating probabilities of becoming a COVID case
+#'
+#' Calculating probabilities of becoming a COVID case based on each individuals
+#' 'current_risk'
+#'
+#' @param df The input list - the output from the create_input function
+#' @param beta_out_sums sum of betas
+#' @param risk_cap_val The value at which current_risk will be capped
+#' @return An updated version of the input list with the probabilties updated
+#' @export
+covid_prob <- function(df, beta_out_sums, risk_cap_val=NA) {
 
   lpsi <- df$beta0 + beta_out_sums
 
@@ -205,26 +218,50 @@ infection_length <- function(df, presymp_dist = "weibull", presymp_mean = 6.4 ,p
   return(df)
 }
 
+#' Determines which individuals should be removed
+#'
+#' @param df Input list of the function - output of the infection_length function
+#' @return idexes of individuals to be removed
+#' @export
+determine_removal <- function(df){
+  
+  removed_cases <- which(df$presymp_days == 0 & df$symp_days == 1 & (df$status == 2 | df$new_status ==2))
+  
+  return(removed_cases)
+}
 
-#' Determines whether removed individuals recover or die
+
+#' Removes cases
 #'
 #' @param df Input list of the function - output of the infection_length function
 #' @param chance_recovery Probability of an infected individual recovering
+#' @param removed_cases Probability of an infected individual recovering
 #' @return An updated version of the input list with the status updates for those
 #' days left in stage = 0.
 #' @export
-removed <- function(df, chance_recovery = 0.95){
-
-  removed_cases <- which(df$presymp_days == 0 & df$symp_days == 1 & (df$status == 2 | df$new_status ==2))
+removed <- function(df, removed_cases, chance_recovery = 0.95){
 
   df$new_status[removed_cases] <- 3 + stats::rbinom(n = length(removed_cases),
                                              size = 1,
                                              prob = (1-chance_recovery))
 
+  return(df)
+}
+
+
+#' Recalculates number of symptomatic and presymptomatic days remaining
+#'
+#' @param df Input list of the function - output of the infection_length function
+#' @param removed_cases Probability of an infected individual recovering
+#' @return An updated version of the input list with the status updates for those
+#' days left in stage = 0.
+#' @export
+recalc_sympdays <- function(df, removed_cases){
+  
   df$symp_days[removed_cases] <- 0
   df$presymp_days[df$presymp_days > 0 ] <- df$presymp_days[df$presymp_days > 0] - 1
   df$symp_days[df$symp_days > 0] <- df$symp_days[df$symp_days > 0] - 1
-
+  
   return(df)
 }
 
