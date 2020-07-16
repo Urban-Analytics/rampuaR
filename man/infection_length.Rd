@@ -14,7 +14,8 @@ infection_length(
   infection_sd = 2,
   timestep,
   tmp.dir = getwd(),
-  save_output = TRUE
+  save_output = TRUE,
+  asymp_rate = 0.5
 )
 }
 \arguments{
@@ -37,6 +38,8 @@ infection_length(
 \item{tmp.dir}{Directory for saving output}
 
 \item{save_output}{Logical. Should output be saved.}
+
+\item{asymp_rate}{Percentage of infected people that are asymptomatic}
 }
 \value{
 An updated version of the input list with the new cases having

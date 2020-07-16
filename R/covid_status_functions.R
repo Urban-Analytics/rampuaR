@@ -113,8 +113,8 @@ covid_prob <- function(df, beta_out_sums, risk_cap_val=NA) {
   psi <- exp(lpsi) / (exp(lpsi) + 1)
   psi <- normalizer(psi, 0,1,0.5,1)  # stretching out the probabilities to be between 0 and 1 rather than 0.5 and 1
 
-  psi[df$status %in% c(3,4)] <- 0 # if they are not susceptible then their probability is 0 of getting it
-  psi[df$status %in% c(1,2)] <- 1 # this makes keeping track of who has it easier
+  psi[df$status %in% c(4,5)] <- 0 # if they are not susceptible then their probability is 0 of getting it
+  psi[df$status %in% c(1,2,3)] <- 1 # this makes keeping track of who has it easier
   df$betaxs <- beta_out_sums
   df$probability <- psi
 
@@ -192,12 +192,14 @@ rank_assign <- function(df, daily_case){
 #' @param timestep The day counter
 #' @param tmp.dir Directory for saving output
 #' @param save_output Logical. Should output be saved.
+#' @param asymp_rate Percentage of infected people that are asymptomatic
 #' @return An updated version of the input list with the new cases having
 #' infection lengths assigned
 #' @export
 infection_length <- function(df, presymp_dist = "weibull", presymp_mean = 6.4 ,presymp_sd = 2,
                              infection_dist = "normal", infection_mean = 14, infection_sd = 2,
-                             timestep, tmp.dir = getwd(), save_output = TRUE){
+                             timestep, tmp.dir = getwd(), save_output = TRUE,
+                             asymp_rate=0.5){
 
   susceptible <- which(df$status == 0)
 
@@ -214,8 +216,11 @@ infection_length <- function(df, presymp_dist = "weibull", presymp_mean = 6.4 ,p
 
   #switching people from being pre symptomatic to symptomatic and infected
   becoming_sympt <- which((df$status == 1 | df$new_status == 1) & df$presymp_days == 0) ### maybe should be status rather than new_status
-  df$new_status[becoming_sympt] <- 2
-
+  #df$new_status[becoming_sympt] <- 2
+  df$new_status[becoming_sympt] <- 2 + stats::rbinom(n = length(becoming_sympt),
+                                                    size = 1,
+                                                    prob = (asymp_rate))
+  
   return(df)
 }
 
@@ -226,7 +231,8 @@ infection_length <- function(df, presymp_dist = "weibull", presymp_mean = 6.4 ,p
 #' @export
 determine_removal <- function(df){
   
-  removed_cases <- which(df$presymp_days == 0 & df$symp_days == 1 & (df$status == 2 | df$new_status ==2))
+  removed_cases <- which(df$presymp_days == 0 & df$symp_days == 1 & 
+                           (df$status == 2 | df$new_status ==2 | df$status == 3 | df$new_status == 3))
   
   return(removed_cases)
 }
