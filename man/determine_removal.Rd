@@ -10,7 +10,7 @@ determine_removal(df)
 \item{df}{Input list of the function - output of the infection_length function}
 }
 \value{
-idexes of individuals to be removed
+Indexes of individuals to be removed
 }
 \description{
 Determines which individuals should be removed

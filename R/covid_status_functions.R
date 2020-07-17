@@ -220,7 +220,7 @@ infection_length <- function(df, presymp_dist = "weibull", presymp_mean = 6.4 ,p
 #' Determines which individuals should be removed
 #'
 #' @param df Input list of the function - output of the infection_length function
-#' @return idexes of individuals to be removed
+#' @return Indexes of individuals to be removed
 #' @export
 determine_removal <- function(df){
   
@@ -234,7 +234,7 @@ determine_removal <- function(df){
 #'
 #' @param df Input list of the function - output of the infection_length function
 #' @param chance_recovery Probability of an infected individual recovering
-#' @param removed_cases Probability of an infected individual recovering
+#' @param removed_cases Indexes of individuals to be removed
 #' @return An updated version of the input list with the status updates for those
 #' days left in stage = 0.
 #' @export
@@ -250,8 +250,8 @@ removed <- function(df, removed_cases, chance_recovery = 0.95){
 
 #' Recalculates number of symptomatic and presymptomatic days remaining
 #'
-#' @param df Input list of the function - output of the infection_length function
-#' @param removed_cases Probability of an infected individual recovering
+#' @param df Input list of the function - output of the removed function
+#' @param removed_cases Indexes of individuals to be removed
 #' @return An updated version of the input list with the status updates for those
 #' days left in stage = 0.
 #' @export

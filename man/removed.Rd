@@ -9,7 +9,7 @@ removed(df, removed_cases, chance_recovery = 0.95)
 \arguments{
 \item{df}{Input list of the function - output of the infection_length function}
 
-\item{removed_cases}{Probability of an infected individual recovering}
+\item{removed_cases}{Indexes of individuals to be removed}
 
 \item{chance_recovery}{Probability of an infected individual recovering}
 }
