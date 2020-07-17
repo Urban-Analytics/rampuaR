@@ -4,14 +4,10 @@
 \alias{covid_prob}
 \title{Calculating probabilities of becoming a COVID case}
 \usage{
-covid_prob(df, beta_out_sums, risk_cap_val = NA)
+covid_prob(df)
 }
 \arguments{
 \item{df}{The input list - the output from the create_input function}
-
-\item{beta_out_sums}{sum of betas}
-
-\item{risk_cap_val}{The value at which current_risk will be capped}
 }
 \value{
 An updated version of the input list with the probabilties updated
