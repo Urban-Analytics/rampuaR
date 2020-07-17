@@ -92,7 +92,9 @@ sum_betas <- function(df, betas, risk_cap_val=NA) {
   beta_names <- beta_names[beta_names %in% names(df)]
   beta_out_sums <- df[[beta_names]] * betas[[beta_names]]
   
-  return(beta_out_sums)
+  df$betaxs <- beta_out_sums
+  
+  return(df)
 }
 
 #' Calculating probabilities of becoming a COVID case
@@ -101,20 +103,17 @@ sum_betas <- function(df, betas, risk_cap_val=NA) {
 #' 'current_risk'
 #'
 #' @param df The input list - the output from the create_input function
-#' @param beta_out_sums sum of betas
-#' @param risk_cap_val The value at which current_risk will be capped
 #' @return An updated version of the input list with the probabilties updated
 #' @export
-covid_prob <- function(df, beta_out_sums, risk_cap_val=NA) {
+covid_prob <- function(df) {
 
-  lpsi <- df$beta0 + beta_out_sums
+  lpsi <- df$beta0 + df$betaxs
 
   psi <- exp(lpsi) / (exp(lpsi) + 1)
   psi <- normalizer(psi, 0,1,0.5,1)  # stretching out the probabilities to be between 0 and 1 rather than 0.5 and 1
 
   psi[df$status %in% c(3,4)] <- 0 # if they are not susceptible then their probability is 0 of getting it
   psi[df$status %in% c(1,2)] <- 1 # this makes keeping track of who has it easier
-  df$betaxs <- beta_out_sums
   df$probability <- psi
 
   return(df)
