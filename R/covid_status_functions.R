@@ -17,11 +17,6 @@
 # 3 = recovered
 # 4 = dead
 
-#########################################
-# calculate the probability of becoming infect
-# requires a dataframe list, a vector of betas, and a timestep
-
-
 #' Formatting data for infection model
 #'
 #' Formatting the output of the spatial interaction model for use in the
