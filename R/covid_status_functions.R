@@ -1,15 +1,3 @@
-
-##################################
-# Functions for Covid simulation code
-# Jesse F. Abrams and Fiona Spooner
-##################################
-# There are three main functions that
-# 1. calculate covid probability
-# 2. assign covid and take a random draw to determine how long a person is infectious
-# 3. take random draw to determine length of sickness and whether the person recovers or dies at the end
-##################################
-
-
 # status column is coded
 # 0 = susceptible
 # 1 = presymp
