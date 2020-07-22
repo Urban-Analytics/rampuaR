@@ -1,7 +1,7 @@
 #' Downloading Google Mobility Data
 #' 
-#' @param force_gm Logical. Should the data be downloaded even if there is
-#' an existing download
+#' @param force_gm Logical. Should the data be downloaded even if it 
+#' already exists
 #' @export
 gm_file_download <- function(force_gm = FALSE){
   
@@ -16,8 +16,7 @@ gm_file_download <- function(force_gm = FALSE){
 
 #' Downloading crosswalk table of MSOA and LAD codes
 #' 
-#' @param force_lad Logical. Should the data be downloaded even if there is
-#' an existing download
+#' @param force_lad Logical. Should the data be downloaded even if it already exists
 #' 
 #' @export
 lad_file_download <- function(force_lad = FALSE){
