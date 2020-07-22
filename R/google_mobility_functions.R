@@ -48,7 +48,7 @@ county_file_download <- function(force_county = FALSE){
 #' Matching the LAD level populations with their associated LAD and county names
 #' 
 #' @param pop An LAD level population with MSOA area codes
-#' @lad_codes Crosswalk of MSOA, LAD codes and county names
+#' @param lad_codes Crosswalk of MSOA, LAD codes and county names
 #' 
 #' @return The population with added LAD and county names
 #' @export
@@ -96,21 +96,18 @@ closest_string <- function(lad_string, county_string, strings_to_match){
 
 #' Filtering out the Google Mobility for the LAD or county
 #' 
-#' @param pop A population with LAD and/or county names
-#' @return Google Mobility data for the given LAD or country
+#' @param gm Google Mobility data - output of gm_file_download.
+#' @param lad_name Name of LAD which we want Google Mobility data for.
+#' @param county_name Name of county which we want Google Mobility data for, 
+#' lad_name should be geographically within county_name.
+#' 
+#' @return Google Mobility data for the given LAD or county
 #' @export
-gm_filter <- function(pop){
+gm_filter <- function(gm, lad_name, county_name){
   
-  lad_name <- unique(pop$lad_name)
-  county_name <- unique(pop$county)
-  
-  gm_filt <- gm[gm$sub_region_1 == closest_string(lad_string = lad_name, county_string = county_name,strings_to_match = gm$sub_region_1),]
-  
-  if(nrow(gm_filt) == 0){
-    name <- unique(pop$county)
-    gm_filt <- gm %>% 
-      dplyr::filter(sub_region_1 == closest_string(name, gm$sub_region_1))
-  }
+  gm_filt <- gm[gm$sub_region_1 == closest_string(lad_string = lad_name,
+                                                  county_string = county_name,
+                                                  strings_to_match = gm$sub_region_1),]
   
   if(nrow(gm_filt) == 0){
     gm_filt <- paste0("No matching Google Mobility data for ", name)
@@ -119,12 +116,16 @@ gm_filter <- function(pop){
   return(gm_filt)  
 }
 
-#' Smoothing the Google Mobility Residential data
+#' Format the Google Mobility output to long format 
+#' and looking at only the "residential_percent_change_from_baseline" data
 #' 
-#' @param gm_out Google Mobility data - output from the gm_filter function
-residential_smoother <- function(gm_out){
+#' @param gm_filt Output from the gm_filter function
+#' @return Long format data with the day and value for the
+#'  residential change from baseline
+#' @export
+format_gm <- function(gm_filt){
   
-  residential_pcnt <- gm_out %>% 
+  residential_pcnt <- gm_filt %>% 
     tidyr::pivot_longer(., contains("percent")) %>% 
     dplyr::filter(
       name == "residential_percent_change_from_baseline"
@@ -132,9 +133,21 @@ residential_smoother <- function(gm_out){
     dplyr::mutate(day = as.numeric(date) - 18306) %>% #February 15th as day 1
     dplyr::select(day, value) 
   
-  new_data <- data.frame(day = 1:nrow(residential_pcnt), value = 0)
-  
+  return(residential_pcnt)
+}
+
+
+#' Smoothing the Google Mobility Residential data - there are some days with missing data
+#' 
+#' @param residential_pcnt Google Mobility residential change 
+#' from baseline data
+#' @return A smoothed set of values for the amount of time people spend 
+#' in residential locations relative to the baseline
+#' @export
+residential_smoother <- function(residential_pcnt){
+
   smooth_residential <- mgcv::gam(value ~ s(day, bs = "cr"), fx = TRUE, data = residential_pcnt)
+  new_data <- data.frame(day = 1:nrow(residential_pcnt), value = 0)
   sr <- stats::predict(smooth_residential, new_data, type = "response")
   sr <- (sr/100) + 1
   
@@ -154,7 +167,10 @@ lockdown_multiplier <- function(smth_res, pop){
   lock_down_reducer <-  new_out/mean(pop$pnothome) # percentage of time spent outside of compared to pre-lockdown
   plot(lock_down_reducer, main = unique(pop$lad_name))
   
-  daily_lock_down_multiplier <-  data.frame(lad_name = unique(pop$lad_name), lad_code = unique(pop$lad_code), day = 1:length(lock_down_reducer), timeout_multiplier = lock_down_reducer)
+  daily_lock_down_multiplier <-  data.frame(lad_name = unique(pop$lad_name),
+                                            lad_code = unique(pop$lad_code),
+                                            day = 1:length(lock_down_reducer),
+                                            timeout_multiplier = lock_down_reducer)
   
   return(daily_lock_down_multiplier)
 }
