@@ -1,6 +1,11 @@
+library(mgcv)
+library(RecordLinkage)
+library(tidyr)
+library(dplyr)
+
 test_that("gm_file_download works", {
   
-  utils::download.file(
+  download.file(
     "https://www.gstatic.com/covid19/mobility/Global_Mobility_Report.csv", "temp_file.csv")
   
   expect_true(file.exists("temp_file.csv"))
@@ -13,7 +18,7 @@ test_that("gm_file_download works", {
 
 test_that("lad_file_download works", {
   
-  utils::download.file(
+  download.file(
     "http://geoportal1-ons.opendata.arcgis.com/datasets/fe6c55f0924b4734adf1cf7104a0173e_0.csv", "temp_file.csv")
   
   expect_true(file.exists("temp_file.csv"))
@@ -24,7 +29,7 @@ test_that("lad_file_download works", {
 
 test_that("county_file_download works", {
   
-  utils::download.file(
+  download.file(
     "https://opendata.arcgis.com/datasets/46dea3d10fc44da9b8daf19ca6f2c204_0.csv", "temp_file.csv")
   
   expect_true(file.exists("temp_file.csv"))
@@ -69,7 +74,7 @@ test_that("closest_string works",{
 
 test_that("gm_filter works", {
   
-  utils::download.file(
+  download.file(
     "https://www.gstatic.com/covid19/mobility/Global_Mobility_Report.csv", "temp_file.csv")
   gm <- read.csv("temp_file.csv")
   
@@ -90,7 +95,8 @@ test_that("gm_filter works", {
 
 test_that("format_gm works", {
   
-  df <- data.frame(date = 18307:18407, residential_percent_change_from_baseline = cospi(seq(0,1.7, length.out = 101))*100+ runif(101, -30,30))
+  df <- data.frame(date = 18307:18407,
+                   residential_percent_change_from_baseline = cospi(seq(0,1.7, length.out = 101))*100+ runif(101, -30,30))
   
   expect_equal(ncol(format_gm(gm_filt = df)), 2)
 
@@ -100,7 +106,8 @@ test_that("format_gm works", {
 
 test_that("residential_smoother works", {
   
-  df <- data.frame(day = 1:100, value = cospi(seq(0,1.7, length.out = 100))*100+ runif(100, -30,30))
+  df <- data.frame(day = 1:100,
+                   value = cospi(seq(0,1.7, length.out = 100))*100+ runif(100, -30,30))
   
   expect_equal(length(residential_smoother(residential_pcnt = df)), nrow(df))
   expect_type(residential_smoother(residential_pcnt = df), "double")

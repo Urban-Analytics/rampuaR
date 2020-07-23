@@ -16,7 +16,6 @@ closest_string(lad_string, county_string, strings_to_match)
 \value{
 The name of the Google Mobility sub-region that most closely
  matches the LAD/county name
- @export
 }
 \description{
 Matching the name of the LAD/County to the closest matching Google Mobility 

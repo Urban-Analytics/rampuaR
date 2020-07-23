@@ -1,16 +1,14 @@
-library(mgcv)
-library(RecordLinkage)
-
 #' Downloading Google Mobility Data
 #' 
 #' @param force_gm Logical. Should the data be downloaded even if it 
 #' already exists
+#' @importFrom utils download.file
 #' @export
 gm_file_download <- function(force_gm = FALSE){
   
   if((force_gm == FALSE &
       !file.exists("Google_Global_Mobility_Report.csv")) | force_gm == TRUE){
-    utils::download.file(
+    download.file(
       "https://www.gstatic.com/covid19/mobility/Global_Mobility_Report.csv",
       destfile = "Google_Global_Mobility_Report.csv"
     )
@@ -21,12 +19,13 @@ gm_file_download <- function(force_gm = FALSE){
 #' 
 #' @param force_lad Logical. Should the data be downloaded even if it already exists
 #' 
+#' @importFrom utils download.file
 #' @export
 lad_file_download <- function(force_lad = FALSE){
   
   if((force_lad == FALSE &
       !file.exists("lad_codes.csv")) | force_lad == TRUE){
-    utils::download.file(
+    download.file(
       "http://geoportal1-ons.opendata.arcgis.com/datasets/fe6c55f0924b4734adf1cf7104a0173e_0.csv",
       "lad_codes.csv")
   }
@@ -36,12 +35,13 @@ lad_file_download <- function(force_lad = FALSE){
 #' 
 #' @param force_county Logical. Should the data be downloaded even if there is
 #' an existing download
+#' @importFrom utils download.file
 #' @export
 county_file_download <- function(force_county = FALSE){
   
   if((force_county == FALSE &
       !file.exists("lad_county_codes.csv")) | force_county == TRUE){
-    utils::download.file(
+   download.file(
       "https://opendata.arcgis.com/datasets/46dea3d10fc44da9b8daf19ca6f2c204_0.csv",
       "lad_county_codes.csv")
   }
@@ -53,13 +53,16 @@ county_file_download <- function(force_county = FALSE){
 #' @param lad_codes Crosswalk of MSOA, LAD codes and county names
 #' 
 #' @return The population with added LAD and county names
+#' @importFrom dplyr filter
+#' @importFrom dplyr select
+#' @importFrom dplyr distinct
 #' @export
 msoa_lad_code_matcher <- function(pop, lad_codes){
   
   code_match <- lad_codes %>% 
-    dplyr::filter(MSOA11CD %in% pop$area) %>% 
-    dplyr::select(lad_name = LAD17NM, lad_code = LAD17CD, county = CTYUA16NM) %>% 
-    dplyr::distinct() 
+   filter(MSOA11CD %in% pop$area) %>% 
+    select(lad_name = LAD17NM, lad_code = LAD17CD, county = CTYUA16NM) %>% 
+    distinct() 
   
   pop_out <- data.frame(pop, code_match)
   
@@ -76,21 +79,22 @@ msoa_lad_code_matcher <- function(pop, lad_codes){
 #' @param strings_to_match Vector of sub-regions from the Google Mobility Data
 #' @return The name of the Google Mobility sub-region that most closely
 #'  matches the LAD/county name
-#'  @export
+#' @importFrom RecordLinkage levenshteinSim
+#' @export
 closest_string <- function(lad_string, county_string, strings_to_match){
   
   lad_string <- gsub(", City of", "", lad_string) # Hull causing grief
   
-  lad_max_mat <- max(RecordLinkage::levenshteinSim(lad_string,strings_to_match))
-  county_max_mat <- max(RecordLinkage::levenshteinSim(county_string, strings_to_match))
+  lad_max_mat <- max(levenshteinSim(lad_string,strings_to_match))
+  county_max_mat <- max(levenshteinSim(county_string, strings_to_match))
   
   if (lad_max_mat >= county_max_mat){
-    lad_max_which <- which.max(RecordLinkage::levenshteinSim(lad_string,strings_to_match))
+    lad_max_which <- which.max(levenshteinSim(lad_string,strings_to_match))
     return(strings_to_match[lad_max_which])
   }
   
   if (county_max_mat > lad_max_mat){
-    county_max_which <- which.max(RecordLinkage::levenshteinSim(county_string,strings_to_match))
+    county_max_which <- which.max(levenshteinSim(county_string,strings_to_match))
     return(strings_to_match[county_max_which])
   } else{
     return("")
@@ -106,6 +110,7 @@ closest_string <- function(lad_string, county_string, strings_to_match){
 #' lad_name should be geographically within county_name.
 #' 
 #' @return Google Mobility data for the given LAD or county
+#' 
 #' @export
 gm_filter <- function(gm, lad_name, county_name){
   
@@ -128,16 +133,23 @@ gm_filter <- function(gm, lad_name, county_name){
 #' @param gm_filt Output from the gm_filter function
 #' @return Long format data with the day and value for the
 #'  residential change from baseline
+#' @importFrom tidyr pivot_longer
+#' @importFrom dplyr mutate
+#' @importFrom dplyr filter
+#' @importFrom dplyr select
+#' @importFrom dplyr %>% 
+#' @importFrom tidyselect contains
+#' 
 #' @export
 format_gm <- function(gm_filt){
   
   residential_pcnt <- gm_filt %>% 
-    tidyr::pivot_longer(., contains("percent")) %>% 
-    dplyr::filter(
+    pivot_longer(., contains("percent")) %>% 
+   filter(
       name == "residential_percent_change_from_baseline"
     ) %>% 
-    dplyr::mutate(day = as.numeric(date) - 18306) %>% #February 15th as day 1
-    dplyr::select(day, value) 
+    mutate(day = as.numeric(date) - 18306) %>% #February 15th as day 1
+   select(day, value) 
   
   return(residential_pcnt)
 }
@@ -149,12 +161,14 @@ format_gm <- function(gm_filt){
 #' from baseline data
 #' @return A smoothed set of values for the amount of time people spend 
 #' in residential locations relative to the baseline
+#' @importFrom mgcv gam
+#' @importFrom stats predict
 #' @export
 residential_smoother <- function(residential_pcnt){
 
-  smooth_residential <- mgcv::gam(value ~ s(day, bs = "cr"), fx = TRUE, data = residential_pcnt)
+  smooth_residential <- gam(value ~ s(day, bs = "cr"), fx = TRUE, data = residential_pcnt)
   new_data <- data.frame(day = 1:nrow(residential_pcnt), value = 0)
-  sr <- stats::predict(smooth_residential, new_data, type = "response")
+  sr <- predict(smooth_residential, new_data, type = "response")
   sr <- (sr/100) + 1
   
   return(sr)
