@@ -15,7 +15,9 @@ Imports:
     mixdist,
     dplyr,
     stats, 
-    utils
+    utils,
+    mgcv,
+    RecordLinkage
 RoxygenNote: 7.1.1
 Suggests: 
     testthat

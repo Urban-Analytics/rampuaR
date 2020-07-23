@@ -1,3 +1,6 @@
+library(mgcv)
+library(RecordLinkage)
+
 #' Downloading Google Mobility Data
 #' 
 #' @param force_gm Logical. Should the data be downloaded even if it 
