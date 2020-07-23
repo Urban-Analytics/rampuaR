@@ -63,6 +63,8 @@ msoa_lad_code_matcher <- function(pop, lad_codes){
   return(pop_out)
 }
 
+#' Matching LAD/County to Google Mobility Region
+#' 
 #' Matching the name of the LAD/County to the closest matching Google Mobility 
 #' Region
 #' 
@@ -115,6 +117,8 @@ gm_filter <- function(gm, lad_name, county_name){
   return(gm_filt)  
 }
 
+#' Format Google Mobility data
+#' 
 #' Format the Google Mobility output to long format 
 #' and looking at only the "residential_percent_change_from_baseline" data
 #' 
