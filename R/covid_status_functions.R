@@ -227,6 +227,20 @@ removed <- function(df, removed_cases, chance_recovery = 0.95){
                                              size = 1,
                                              prob = (1-chance_recovery))
 
+  # 
+  # if(unique(df$age) > 6){
+  #   
+  #   df <- data.frame(min_age = c(0,10,20,30,40,50,60,70,80),
+  #                    max_age = c(9,19,29,39,49,59,69,79,120),
+  #                    recovery_rate = c(0.9999839, 0.9999305, 0.999691, 0.999156, 0.99839, 0.99405, 0.9807, 0.9572, 0.922))
+  #   
+  #    df$new_status[removed_cases[which(df$age >= 10 & df$age <= 19)]] <- 3 + stats::rbinom(n = length(removed_cases),
+  #                                                                           size = 1,
+  #                                                                           prob = (1 - 0.9999305))
+  #      }
+  # 
+  # 
+  
   return(df)
 }
 
