@@ -7,8 +7,7 @@
 lad_file_download(force_lad = FALSE)
 }
 \arguments{
-\item{force_lad}{Logical. Should the data be downloaded even if there is
-an existing download}
+\item{force_lad}{Logical. Should the data be downloaded even if it already exists}
 }
 \description{
 Downloading crosswalk table of MSOA and LAD codes

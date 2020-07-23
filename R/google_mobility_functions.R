@@ -1,3 +1,6 @@
+library(mgcv)
+library(RecordLinkage)
+
 #' Downloading Google Mobility Data
 #' 
 #' @param force_gm Logical. Should the data be downloaded even if it 
@@ -177,3 +180,5 @@ lockdown_multiplier <- function(smth_res, pop){
   
   return(daily_lock_down_multiplier)
 }
+
+

@@ -7,8 +7,8 @@
 gm_file_download(force_gm = FALSE)
 }
 \arguments{
-\item{force_gm}{Logical. Should the data be downloaded even if there is
-an existing download}
+\item{force_gm}{Logical. Should the data be downloaded even if it 
+already exists}
 }
 \description{
 Downloading Google Mobility Data

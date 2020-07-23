@@ -2,8 +2,7 @@
 % Please edit documentation in R/google_mobility_functions.R
 \name{format_gm}
 \alias{format_gm}
-\title{Format the Google Mobility output to long format 
-and looking at only the "residential_percent_change_from_baseline" data}
+\title{Format Google Mobility data}
 \usage{
 format_gm(gm_filt)
 }
