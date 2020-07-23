@@ -46,11 +46,21 @@ test_that("msoa_lad_code_matcher works", {
   lad_codes <- data.frame(MSOA11CD = letters[seq( from = 1, to = 10 )], 
                           LAD17NM = c("blue","yellow", "green", "red", "pink", "orange", "purple", "red", "brown", "black"),
                           LAD17CD = sample(1:1000, 10),
-                          CTYUA16NM = c("banana", "apple", "mango", "strawberry", "pear", "cherry", "orange", "melon", "lemon", "lime"))
+                          CTYUA16NM = c("banana", "apple", "mango", "strawberry", "pear", "cherry", "orange", "melon", "lemon", "lime"),
+                          stringsAsFactors = FALSE)
   
   expect_gte(ncol(msoa_lad_code_matcher(pop = pop, lad_codes = lad_codes)), ncol(pop))
   expect_type(msoa_lad_code_matcher(pop = pop, lad_codes = lad_codes)[["county"]], "character")
   
+  # validate stop statement
+  lad_codesFactor <-  lad_codes <- data.frame(MSOA11CD = letters[seq( from = 1, to = 10 )], 
+                          LAD17NM = c("blue","yellow", "green", "red", "pink", "orange", "purple", "red", "brown", "black"),
+                          LAD17CD = sample(1:1000, 10),
+                          CTYUA16NM = c("banana", "apple", "mango", "strawberry", "pear", "cherry", "orange", "melon", "lemon", "lime"),
+                          stringsAsFactors = TRUE)
+
+  expect_error(msoa_lad_code_matcher(pop = pop, lad_codes = lad_codesFactor), "Error: the CTYUA16NM column data type is not character.",
+                                     fixed = TRUE)
 })
 
 
@@ -76,7 +86,7 @@ test_that("gm_filter works", {
   
   download.file(
     "https://www.gstatic.com/covid19/mobility/Global_Mobility_Report.csv", "temp_file.csv")
-  gm <- read.csv("temp_file.csv")
+  gm <- read.csv("temp_file.csv", stringsAsFactors = FALSE)
   
   lad_name <- "Blaby"
   county_name <- "Leicestershire"
