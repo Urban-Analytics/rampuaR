@@ -9,3 +9,5 @@
 
 # any archived binaries
 **/*.tar.gz
+
+**/.vagrant/*
