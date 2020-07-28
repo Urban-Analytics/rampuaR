@@ -1,10 +1,11 @@
 # status column is coded
 # 0 = susceptible
-# 1 = presymp
-# 2 = symp
-# 3 = asymp
-# 4 = recovered
-# 5 = dead
+# 1 = exposed
+# 2 = presymp
+# 3 = symp
+# 4 = asymp
+# 5 = recovered
+# 6 = dead
 
 #' Formatting data for infection model
 #'
@@ -96,8 +97,8 @@ covid_prob <- function(df) {
   psi <- exp(lpsi) / (exp(lpsi) + 1)
   psi <- normalizer(psi, 0,1,0.5,1)  # stretching out the probabilities to be between 0 and 1 rather than 0.5 and 1
 
-  psi[df$status %in% c(4,5)] <- 0 # if they are not susceptible then their probability is 0 of getting it
-  psi[df$status %in% c(1,2,3)] <- 1 # this makes keeping track of who has it easier
+  psi[df$status %in% c(5,6)] <- 0 # if they are not susceptible then their probability is 0 of getting it
+  psi[df$status %in% c(1,2,3,4)] <- 1 # this makes keeping track of who has it easier
   df$probability <- psi
 
   return(df)
