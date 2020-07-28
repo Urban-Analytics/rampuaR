@@ -1,15 +1,3 @@
-
-##################################
-# Functions for Covid simulation code
-# Jesse F. Abrams and Fiona Spooner
-##################################
-# There are three main functions that
-# 1. calculate covid probability
-# 2. assign covid and take a random draw to determine how long a person is infectious
-# 3. take random draw to determine length of sickness and whether the person recovers or dies at the end
-##################################
-
-
 # status column is coded
 # 0 = susceptible
 # 1 = presymp
@@ -17,11 +5,6 @@
 # 3 = asymp
 # 4 = recovered
 # 5 = dead
-
-#########################################
-# calculate the probability of becoming infect
-# requires a dataframe list, a vector of betas, and a timestep
-
 
 #' Formatting data for infection model
 #'
@@ -93,7 +76,9 @@ sum_betas <- function(df, betas, risk_cap_val=NA) {
   beta_names <- beta_names[beta_names %in% names(df)]
   beta_out_sums <- df[[beta_names]] * betas[[beta_names]]
   
-  return(beta_out_sums)
+  df$betaxs <- beta_out_sums
+  
+  return(df)
 }
 
 #' Calculating probabilities of becoming a COVID case
@@ -102,20 +87,17 @@ sum_betas <- function(df, betas, risk_cap_val=NA) {
 #' 'current_risk'
 #'
 #' @param df The input list - the output from the create_input function
-#' @param beta_out_sums sum of betas
-#' @param risk_cap_val The value at which current_risk will be capped
 #' @return An updated version of the input list with the probabilties updated
 #' @export
-covid_prob <- function(df, beta_out_sums, risk_cap_val=NA) {
+covid_prob <- function(df) {
 
-  lpsi <- df$beta0 + beta_out_sums
+  lpsi <- df$beta0 + df$betaxs
 
   psi <- exp(lpsi) / (exp(lpsi) + 1)
   psi <- normalizer(psi, 0,1,0.5,1)  # stretching out the probabilities to be between 0 and 1 rather than 0.5 and 1
 
   psi[df$status %in% c(4,5)] <- 0 # if they are not susceptible then their probability is 0 of getting it
   psi[df$status %in% c(1,2,3)] <- 1 # this makes keeping track of who has it easier
-  df$betaxs <- beta_out_sums
   df$probability <- psi
 
   return(df)
@@ -227,7 +209,7 @@ infection_length <- function(df, presymp_dist = "weibull", presymp_mean = 6.4 ,p
 #' Determines which individuals should be removed
 #'
 #' @param df Input list of the function - output of the infection_length function
-#' @return idexes of individuals to be removed
+#' @return Indexes of individuals to be removed
 #' @export
 determine_removal <- function(df){
   
@@ -242,7 +224,7 @@ determine_removal <- function(df){
 #'
 #' @param df Input list of the function - output of the infection_length function
 #' @param chance_recovery Probability of an infected individual recovering
-#' @param removed_cases Probability of an infected individual recovering
+#' @param removed_cases Indexes of individuals to be removed
 #' @return An updated version of the input list with the status updates for those
 #' days left in stage = 0.
 #' @export
@@ -252,14 +234,28 @@ removed <- function(df, removed_cases, chance_recovery = 0.95){
                                              size = 1,
                                              prob = (1-chance_recovery))
 
+  # 
+  # if(unique(df$age) > 6){
+  #   
+  #   df <- data.frame(min_age = c(0,10,20,30,40,50,60,70,80),
+  #                    max_age = c(9,19,29,39,49,59,69,79,120),
+  #                    recovery_rate = c(0.9999839, 0.9999305, 0.999691, 0.999156, 0.99839, 0.99405, 0.9807, 0.9572, 0.922))
+  #   
+  #    df$new_status[removed_cases[which(df$age >= 10 & df$age <= 19)]] <- 3 + stats::rbinom(n = length(removed_cases),
+  #                                                                           size = 1,
+  #                                                                           prob = (1 - 0.9999305))
+  #      }
+  # 
+  # 
+  
   return(df)
 }
 
 
 #' Recalculates number of symptomatic and presymptomatic days remaining
 #'
-#' @param df Input list of the function - output of the infection_length function
-#' @param removed_cases Probability of an infected individual recovering
+#' @param df Input list of the function - output of the removed function
+#' @param removed_cases Indexes of individuals to be removed
 #' @return An updated version of the input list with the status updates for those
 #' days left in stage = 0.
 #' @export

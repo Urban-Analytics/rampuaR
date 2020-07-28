@@ -41,8 +41,8 @@ test_that("sum_betas", {
              status = c(rep(0,5), 1, 2, 3, 4, 0),
              new_status = c(rep(0,5), 1, 2, 3, 4, 0))
   
-  expect_type(sum_betas(df = df, betas = list(current_risk = 0.42), risk_cap_val = 5), "double")
-  expect_length(sum_betas(df = df, betas = list(current_risk = 0.42), risk_cap_val = 5), length(df$betaxs))
+  expect_type(sum_betas(df = df, betas = list(current_risk = 0.42), risk_cap_val = 5), "list")
+  expect_length(sum_betas(df = df, betas = list(current_risk = 0.42), risk_cap_val = 5)[["betaxs"]], length(df$betaxs))
   
 })
 
@@ -59,24 +59,24 @@ test_that("covid_prob", {
               status = c(rep(0,5), 1, 2, 3, 4, 0),
               new_status = c(rep(0,5), 1, 2, 3, 4, 0))
 
-  expect_equal(covid_prob(df = df,beta_out_sums = rep(0.1,10), risk_cap_val = 5)[["id"]], df$id)
-  expect_equal(covid_prob(df = df,beta_out_sums = rep(0.1,10), risk_cap_val = 5)[["current_risk"]], df$current_risk)
-  expect_equal(covid_prob(df = df,beta_out_sums = rep(0.1,10), risk_cap_val = 5)[["beta0"]], df$beta0)
-  expect_equal(covid_prob(df = df,beta_out_sums = rep(0.1,10), risk_cap_val = 5)[["hid_status"]], df$hid_status)
-  expect_equal(covid_prob(df = df,beta_out_sums = rep(0.1,10), risk_cap_val = 5)[["presymp_days"]], df$presymp_days)
-  expect_equal(covid_prob(df = df,beta_out_sums = rep(0.1,10), risk_cap_val = 5)[["symp_days"]], df$symp_days)
-  expect_equal(covid_prob(df = df,beta_out_sums = rep(0.1,10), risk_cap_val = 5)[["status"]], df$status)
-  expect_equal(covid_prob(df = df,beta_out_sums = rep(0.1,10), risk_cap_val = 5)[["new_status"]], df$new_status)
+  expect_equal(covid_prob(df = df)[["id"]], df$id)
+  expect_equal(covid_prob(df = df)[["current_risk"]], df$current_risk)
+  expect_equal(covid_prob(df = df)[["beta0"]], df$beta0)
+  expect_equal(covid_prob(df = df)[["hid_status"]], df$hid_status)
+  expect_equal(covid_prob(df = df)[["presymp_days"]], df$presymp_days)
+  expect_equal(covid_prob(df = df)[["symp_days"]], df$symp_days)
+  expect_equal(covid_prob(df = df)[["status"]], df$status)
+  expect_equal(covid_prob(df = df)[["new_status"]], df$new_status)
   
-  expect_type(covid_prob(df = df,beta_out_sums = rep(0.1,10), risk_cap_val = 5)[["betaxs"]], "double")
+  expect_type(covid_prob(df = df)[["betaxs"]], "double")
   
-  expect_length(covid_prob(df = df,beta_out_sums = rep(0.1,10), risk_cap_val = 5)[["betaxs"]], length(df$betaxs))
+  expect_length(covid_prob(df = df)[["betaxs"]], length(df$betaxs))
   
-  expect_type(covid_prob(df = df,beta_out_sums = rep(0.1,10), risk_cap_val = 5)[["probability"]], "double")
-  expect_length(covid_prob(df = df,beta_out_sums = rep(0.1,10), risk_cap_val = 5)[["probability"]], length(df$betaxs))
+  expect_type(covid_prob(df = df)[["probability"]], "double")
+  expect_length(covid_prob(df = df)[["probability"]], length(df$betaxs))
 
-  expect_lte(max(covid_prob(df = df,beta_out_sums = rep(0.1,10), risk_cap_val = 5)[["probability"]]), 1)
-  expect_gte(min(covid_prob(df = df,beta_out_sums = rep(0.1,10), risk_cap_val = 5)[["probability"]]), 0)
+  expect_lte(max(covid_prob(df = df)[["probability"]]), 1)
+  expect_gte(min(covid_prob(df = df)[["probability"]]), 0)
 })
 
 test_that("case_assign works", {

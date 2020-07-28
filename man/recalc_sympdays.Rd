@@ -7,9 +7,9 @@
 recalc_sympdays(df, removed_cases)
 }
 \arguments{
-\item{df}{Input list of the function - output of the infection_length function}
+\item{df}{Input list of the function - output of the removed function}
 
-\item{removed_cases}{Probability of an infected individual recovering}
+\item{removed_cases}{Indexes of individuals to be removed}
 }
 \value{
 An updated version of the input list with the status updates for those
