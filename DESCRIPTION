@@ -1,7 +1,7 @@
 Package: rampuaR
 Type: Package
 Title: COVID Infection Model
-Version: 0.1.0
+Version: 1.0.0
 Author: Fiona Spooner & Jesse Abrams
 Maintainer: The package maintainer <yourself@somewhere.net>
 Description: More about what it does (maybe more than one line)
