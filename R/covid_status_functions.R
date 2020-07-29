@@ -176,16 +176,19 @@ rank_assign <- function(df, daily_case){
 #' @param infection_dist The distribution of the length of the symptomatic stage
 #' @param infection_mean The mean length of the symptomatic stage
 #' @param infection_sd The standard deviation of the length of the symptomatic stage
-#' @param timestep The day counter
-#' @param tmp.dir Directory for saving output
-#' @param save_output Logical. Should output be saved.
 #' @param asymp_rate Percentage of infected people that are asymptomatic
 #' @return An updated version of the input list with the new cases having
 #' infection lengths assigned
 #' @export
-infection_length <- function(df, exposed_dist = "weibull", exposed_mean = 3.2, exposed_sd = 1, presymp_dist = "weibull", presymp_mean = 3.2, presymp_sd = 1,
-                             infection_dist = "normal", infection_mean = 14, infection_sd = 2,
-                             timestep, tmp.dir = getwd(), save_output = TRUE,
+infection_length <- function(df, exposed_dist = "weibull",
+                             exposed_mean = 3.2,
+                             exposed_sd = 1,
+                             presymp_dist = "weibull",
+                             presymp_mean = 3.2,
+                             presymp_sd = 1,
+                             infection_dist = "normal",
+                             infection_mean = 14,
+                             infection_sd = 2,
                              asymp_rate=0.5){
 
   susceptible <- which(df$status == 0)
