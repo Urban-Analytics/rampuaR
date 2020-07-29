@@ -1,8 +1,8 @@
 Package: rampuaR
 Type: Package
 Title: COVID Infection Model
-Version: 1.0.0
-Author: Fiona Spooner & Jesse Abrams
+Version: 2.0.0
+Author: Fiona Spooner & Jesse F. Abrams
 Maintainer: The package maintainer <yourself@somewhere.net>
 Description: More about what it does (maybe more than one line)
     Use four spaces when indenting paragraphs within the Description.
