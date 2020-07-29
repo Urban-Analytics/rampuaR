@@ -200,11 +200,19 @@ infection_length <- function(df, exposed_dist = "weibull",
     df$exposed_days[new_cases] <- round(stats::rweibull(1:length(new_cases), shape = as.numeric(wpar["shape"]), scale = as.numeric(wpar["scale"])),)
   }
   
+  if (exposed_dist = "lognormal"){
+    df$exposed_days[new_cases] <- round(rlnorm(1:length(new_cases), meanlog = log(exposed_mean), sdlog = log(exposed_sd)))
+  }
+  
   if (presymp_dist == "weibull"){
     wpar <- mixdist::weibullpar(mu = presymp_mean, sigma = presymp_sd, loc = 0)
     df$presymp_days[new_cases] <- round(stats::rweibull(1:length(new_cases), shape = as.numeric(wpar["shape"]), scale = as.numeric(wpar["scale"])),)
   }
-
+  
+  if (presymp_dist = "lognormal"){
+    df$presymp_days[new_cases] <- round(rlnorm(1:length(new_cases), meanlog = log(presymp_mean), sdlog = log(presymp_sd)))
+  }
+  
   if (infection_dist == "normal"){
     df$symp_days[new_cases] <- round(stats::rnorm(1:length(new_cases), mean = infection_mean, sd = infection_sd))
   }
