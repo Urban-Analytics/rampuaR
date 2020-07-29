@@ -155,19 +155,19 @@ test_that("infection_length works", {
 
   timestep <- 1
 
-  expect_type(infection_length(df, timestep = timestep), "list")
+  expect_type(infection_length(df), "list")
 
-  expect_true(all(infection_length(df, timestep = timestep)[["new_status"]] >= df$new_status))
-  expect_true(all(infection_length(df, timestep = timestep)[["new_status"]] >= df$status))
+  expect_true(all(infection_length(df)[["new_status"]] >= df$new_status))
+  expect_true(all(infection_length(df)[["new_status"]] >= df$status))
 
-  expect_equal(infection_length(df, timestep = timestep)[["id"]], df$id)
-  expect_equal(infection_length(df, timestep = timestep)[["current_risk"]], df$current_risk)
-  expect_equal(infection_length(df, timestep = timestep)[["beta0"]], df$beta0)
-  expect_equal(infection_length(df, timestep = timestep)[["betaxs"]], df$betaxs)
-  expect_equal(infection_length(df, timestep = timestep)[["hid_status"]], df$hid_status)
-  expect_equal(infection_length(df, timestep = timestep)[["status"]], df$status)
-  expect_equal(infection_length(df, timestep = timestep)[["probability"]], df$probability)
-  expect_equal(sum(infection_length(df, timestep = timestep)[["presymp_days"]] >0) - sum(df$presymp_days > 0),sum(df$status == 0 & df$new_status == 1))
+  expect_equal(infection_length(df)[["id"]], df$id)
+  expect_equal(infection_length(df)[["current_risk"]], df$current_risk)
+  expect_equal(infection_length(df)[["beta0"]], df$beta0)
+  expect_equal(infection_length(df)[["betaxs"]], df$betaxs)
+  expect_equal(infection_length(df)[["hid_status"]], df$hid_status)
+  expect_equal(infection_length(df)[["status"]], df$status)
+  expect_equal(infection_length(df)[["probability"]], df$probability)
+  expect_equal(sum(infection_length(df)[["presymp_days"]] >0) - sum(df$presymp_days > 0),sum(df$status == 0 & df$new_status == 1))
 
 })
 

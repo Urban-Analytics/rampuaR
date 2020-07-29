@@ -15,9 +15,6 @@ infection_length(
   infection_dist = "normal",
   infection_mean = 14,
   infection_sd = 2,
-  timestep,
-  tmp.dir = getwd(),
-  save_output = TRUE,
   asymp_rate = 0.5
 )
 }
@@ -41,12 +38,6 @@ infection_length(
 \item{infection_mean}{The mean length of the symptomatic stage}
 
 \item{infection_sd}{The standard deviation of the length of the symptomatic stage}
-
-\item{timestep}{The day counter}
-
-\item{tmp.dir}{Directory for saving output}
-
-\item{save_output}{Logical. Should output be saved.}
 
 \item{asymp_rate}{Percentage of infected people that are asymptomatic}
 }
