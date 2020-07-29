@@ -283,9 +283,9 @@ removed <- function(df,chance_recovery = 0.95){
 recalc_sympdays <- function(df){
   
   #df$symp_days[removed_cases] <- 0
-  df$exposed_days[df$exposed_days > 0] <- df$exposed_days[df$exposed_days > 0] - 1
-  df$presymp_days[df$presymp_days > 0 ] <- df$presymp_days[df$presymp_days > 0] - 1
-  df$symp_days[df$symp_days > 0] <- df$symp_days[df$symp_days > 0] - 1
+  df$exposed_days[df$exposed_days > 0 & df$status == 1] <- df$exposed_days[df$exposed_days > 0 & df$status == 1] - 1
+  df$presymp_days[df$presymp_days > 0 & df$status  == 2 ] <- df$presymp_days[df$presymp_days > 0  & df$status  == 2] - 1
+  df$symp_days[df$symp_days > 0  & (df$status == 3 |df$status == 4 )] <- df$symp_days[df$symp_days > 0 & (df$status == 3 |df$status == 4 )] - 1
   
   return(df)
 }
