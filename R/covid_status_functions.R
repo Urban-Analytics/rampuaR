@@ -35,6 +35,7 @@ create_input <-
       beta0 = rep(0, nrow(micro_sim_pop)),
       betaxs = rep(0, nrow(micro_sim_pop)),
       hid_status = rep(0, nrow(micro_sim_pop)),
+      exposed_days = micro_sim_pop$exposed_days,
       presymp_days = micro_sim_pop$presymp_days,
       symp_days = micro_sim_pop$symp_days,
       probability = rep(0, nrow(micro_sim_pop)),
@@ -166,6 +167,9 @@ rank_assign <- function(df, daily_case){
 #' presymptomatic and symptomatic for.
 #'
 #' @param df Input list of the function - output of an ____assign function
+#' @param exposed_dist The distribution of the length of the exposed stage
+#' @param exposed_mean The mean length of the exposed stage
+#' @param exposed_sd The standard deviation of the length of the exposed stage
 #' @param presymp_dist The distribution of the length of the presymptomatic stage
 #' @param presymp_mean The mean length of the presymptomatic stage
 #' @param presymp_sd The standard deviation of the length of the presymptomatic stage
@@ -179,7 +183,7 @@ rank_assign <- function(df, daily_case){
 #' @return An updated version of the input list with the new cases having
 #' infection lengths assigned
 #' @export
-infection_length <- function(df, presymp_dist = "weibull", presymp_mean = 6.4 ,presymp_sd = 2,
+infection_length <- function(df, exposed_dist = "weibull", exposed_mean = 3.2, exposed_sd = 1, presymp_dist = "weibull", presymp_mean = 3.2, presymp_sd = 1,
                              infection_dist = "normal", infection_mean = 14, infection_sd = 2,
                              timestep, tmp.dir = getwd(), save_output = TRUE,
                              asymp_rate=0.5){
@@ -188,6 +192,11 @@ infection_length <- function(df, presymp_dist = "weibull", presymp_mean = 6.4 ,p
 
   new_cases <- which((df$new_status - df$status ==1) & df$status == 0)
 
+  if (exposed_dist == "weibull"){
+    wpar <- mixdist::weibullpar(mu = exposed_mean, sigma = exposed_sd, loc = 0)
+    df$exposed_days[new_cases] <- round(stats::rweibull(1:length(new_cases), shape = as.numeric(wpar["shape"]), scale = as.numeric(wpar["scale"])),)
+  }
+  
   if (presymp_dist == "weibull"){
     wpar <- mixdist::weibullpar(mu = presymp_mean, sigma = presymp_sd, loc = 0)
     df$presymp_days[new_cases] <- round(stats::rweibull(1:length(new_cases), shape = as.numeric(wpar["shape"]), scale = as.numeric(wpar["scale"])),)
@@ -197,44 +206,45 @@ infection_length <- function(df, presymp_dist = "weibull", presymp_mean = 6.4 ,p
     df$symp_days[new_cases] <- round(stats::rnorm(1:length(new_cases), mean = infection_mean, sd = infection_sd))
   }
 
+  becoming_pre_sympt <- which((df$status == 1 | df$new_status == 1) & df$exposed_days == 0) ### maybe should be status rather than new_status
+  
+  df$new_status[becoming_pre_sympt] <- 2 
+  
   #switching people from being pre symptomatic to symptomatic and infected
-  becoming_sympt <- which((df$status == 1 | df$new_status == 1) & df$presymp_days == 0) ### maybe should be status rather than new_status
+  becoming_sympt <- which((df$status == 2 | df$new_status == 2) & df$presymp_days == 0) ### maybe should be status rather than new_status
   #df$new_status[becoming_sympt] <- 2
-  df$new_status[becoming_sympt] <- 2 + stats::rbinom(n = length(becoming_sympt),
+  df$new_status[becoming_sympt] <- 3 + stats::rbinom(n = length(becoming_sympt),
                                                     size = 1,
                                                     prob = (asymp_rate))
   
   return(df)
 }
 
-#' Determines which individuals should be removed
-#'
-#' @param df Input list of the function - output of the infection_length function
-#' @return Indexes of individuals to be removed
-#' @export
-determine_removal <- function(df){
-  
-  removed_cases <- which(df$presymp_days == 0 & df$symp_days == 1 & 
-                           (df$status == 2 | df$new_status ==2 | df$status == 3 | df$new_status == 3))
-  
-  return(removed_cases)
-}
-
-
 #' Removes cases
+#'
+#' For symptomatic individuals they have a 95% chance of recovery,
+#' for asymptomatic they all recover.
 #'
 #' @param df Input list of the function - output of the infection_length function
 #' @param chance_recovery Probability of an infected individual recovering
-#' @param removed_cases Indexes of individuals to be removed
 #' @return An updated version of the input list with the status updates for those
 #' days left in stage = 0.
 #' @export
-removed <- function(df, removed_cases, chance_recovery = 0.95){
+removed <- function(df,chance_recovery = 0.95){
 
-  df$new_status[removed_cases] <- 4 + stats::rbinom(n = length(removed_cases),
+  removed_cases_symp <- which(df$exposed_days == 0 & df$presymp_days == 0 & df$symp_days == 1 & 
+                           (df$status == 3 | df$new_status == 3))
+  
+  removed_cases_asymp <- which(df$exposed_days == 0 & df$presymp_days == 0 & df$symp_days == 1 & 
+                                 (df$status == 4 | df$new_status == 4))
+  
+  
+  df$new_status[removed_cases_symp] <- 5 + stats::rbinom(n = length(removed_cases_symp),
                                              size = 1,
                                              prob = (1-chance_recovery))
 
+  df$new_status[removed_cases_asymp] <- 5
+  
   # 
   # if(unique(df$age) > 6){
   #   
@@ -256,13 +266,13 @@ removed <- function(df, removed_cases, chance_recovery = 0.95){
 #' Recalculates number of symptomatic and presymptomatic days remaining
 #'
 #' @param df Input list of the function - output of the removed function
-#' @param removed_cases Indexes of individuals to be removed
 #' @return An updated version of the input list with the status updates for those
 #' days left in stage = 0.
 #' @export
-recalc_sympdays <- function(df, removed_cases){
+recalc_sympdays <- function(df){
   
-  df$symp_days[removed_cases] <- 0
+  #df$symp_days[removed_cases] <- 0
+  df$exposed_days[df$exposed_days > 0] <- df$exposed_days[df$exposed_days > 0] - 1
   df$presymp_days[df$presymp_days > 0 ] <- df$presymp_days[df$presymp_days > 0] - 1
   df$symp_days[df$symp_days > 0] <- df$symp_days[df$symp_days > 0] - 1
   
@@ -277,9 +287,8 @@ recalc_sympdays <- function(df, removed_cases){
 #' days left in stage = 0.
 #' @export
 run_removal_recalc <- function(df, chance_recovery = 0.95){
-  removed_cases <- determine_removal(df)
-  df_tmp <- removed(df, removed_cases, chance_recovery = 0.95)
-  df_tmp <- recalc_sympdays(df_tmp, removed_cases)
+  df_tmp <- removed(df, chance_recovery = 0.95)
+  df_tmp <- recalc_sympdays(df_tmp)
   return(df_tmp)
 }
 

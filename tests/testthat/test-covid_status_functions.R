@@ -171,26 +171,6 @@ test_that("infection_length works", {
 
 })
 
-test_that("determine_removal works", {
-
-  df <- list(id = 1:10,
-             current_risk = runif(10, 0, 1),
-             beta0 = rep(0, 10),
-             betaxs = runif(10, 0, 1),
-             hid_status = rep(0, 10),
-             presymp_days = rep(0,10),
-             symp_days = rep(1,10),
-             status = c(rep(0,5), rep(2, 5)),
-             new_status =c(rep(0,5), rep(2, 5)),
-             probability = runif(10, 0, 1))
-  timestep <- 1
-  expect_type(infection_length(df, timestep = timestep), "list")
-
-  expect_length(determine_removal(df), 5)
-  
-  #expect_type(determine_removal(df), "numeric")
-
-})
 
 test_that("removed works", {
 
@@ -205,9 +185,9 @@ test_that("removed works", {
              new_status =c(rep(0,5), rep(2, 5)),
              probability = runif(10, 0, 1))
   timestep <- 1
-  expect_type(infection_length(df, timestep = timestep), "list")
+  expect_type(removed(df), "list")
 
-  expect_true(all(removed(df, removed_cases=c(4,5,6))[["new_status"]] >= df$status))
+  expect_true(all(removed(df)[["new_status"]] >= df$status))
 
 })
 
@@ -224,10 +204,9 @@ test_that("recalc_sympdays works", {
              new_status =c(rep(0,5), rep(2, 5)),
              probability = runif(10, 0, 1))
   timestep <- 1
-  expect_type(infection_length(df, timestep = timestep), "list")
-  expect_type(infection_length(df), "list")
+  expect_type(recalc_sympdays(df), "list")
   
-  expect_true(all(recalc_sympdays(df, removed_cases=c(4,5,6))[["new_status"]] >= df$new_status))
+  expect_true(all(recalc_sympdays(df)[["new_status"]] >= df$new_status))
 
 })
 
@@ -244,9 +223,7 @@ test_that("run_removal_recalc works", {
              new_status =c(rep(0,5), rep(2, 5)),
              probability = runif(10, 0, 1))
   timestep <- 1
-  expect_type(infection_length(df, timestep = timestep), "list")
-  expect_type(infection_length(df), "list")
-  
+
   expect_true(all(run_removal_recalc(df, chance_recovery = 0.95)[["new_status"]] >= df$new_status))
   
 })

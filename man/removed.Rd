@@ -4,12 +4,10 @@
 \alias{removed}
 \title{Removes cases}
 \usage{
-removed(df, removed_cases, chance_recovery = 0.95)
+removed(df, chance_recovery = 0.95)
 }
 \arguments{
 \item{df}{Input list of the function - output of the infection_length function}
-
-\item{removed_cases}{Indexes of individuals to be removed}
 
 \item{chance_recovery}{Probability of an infected individual recovering}
 }
@@ -18,5 +16,6 @@ An updated version of the input list with the status updates for those
 days left in stage = 0.
 }
 \description{
-Removes cases
+For symptomatic individuals they have a 95% chance of recovery,
+for asymptomatic they all recover.
 }

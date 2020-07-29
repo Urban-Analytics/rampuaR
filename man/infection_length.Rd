@@ -6,9 +6,12 @@
 \usage{
 infection_length(
   df,
+  exposed_dist = "weibull",
+  exposed_mean = 3.2,
+  exposed_sd = 1,
   presymp_dist = "weibull",
-  presymp_mean = 6.4,
-  presymp_sd = 2,
+  presymp_mean = 3.2,
+  presymp_sd = 1,
   infection_dist = "normal",
   infection_mean = 14,
   infection_sd = 2,
@@ -20,6 +23,12 @@ infection_length(
 }
 \arguments{
 \item{df}{Input list of the function - output of an ____assign function}
+
+\item{exposed_dist}{The distribution of the length of the exposed stage}
+
+\item{exposed_mean}{The mean length of the exposed stage}
+
+\item{exposed_sd}{The standard deviation of the length of the exposed stage}
 
 \item{presymp_dist}{The distribution of the length of the presymptomatic stage}
 

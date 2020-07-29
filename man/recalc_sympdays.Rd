@@ -4,12 +4,10 @@
 \alias{recalc_sympdays}
 \title{Recalculates number of symptomatic and presymptomatic days remaining}
 \usage{
-recalc_sympdays(df, removed_cases)
+recalc_sympdays(df)
 }
 \arguments{
 \item{df}{Input list of the function - output of the removed function}
-
-\item{removed_cases}{Indexes of individuals to be removed}
 }
 \value{
 An updated version of the input list with the status updates for those
