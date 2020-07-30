@@ -177,20 +177,21 @@ rank_assign <- function(df, daily_case){
 #' @param infection_mean The mean length of the symptomatic stage
 #' @param infection_sd The standard deviation of the length of the symptomatic stage
 #' @param asymp_rate Percentage of infected people that are asymptomatic
+#' @importFrom stats rlnorm
 #' @return An updated version of the input list with the new cases having
 #' infection lengths assigned
 #' @export
 infection_length <- function(df, 
-                             exposed_dist,
-                             exposed_mean,
-                             exposed_sd,
-                             presymp_dist,
-                             presymp_mean,
-                             presymp_sd,
-                             infection_dist,
-                             infection_mean,
-                             infection_sd,
-                             asymp_rate){
+                             exposed_dist = "weibull",
+                             exposed_mean = 2.56,
+                             exposed_sd = 0.72,
+                             presymp_dist = "weibull",
+                             presymp_mean = 2.3,
+                             presymp_sd = 0.35,
+                             infection_dist = "normal",
+                             infection_mean =  16,
+                             infection_sd = 3,
+                             asymp_rate = 0.7){
 
   susceptible <- which(df$status == 0)
 
@@ -353,8 +354,10 @@ normalizer <- function(x ,lower_bound, upper_bound, xmin, xmax){
 #' @param asymp_rate Percentage of infected people that are asymptomatic
 #' @param chance_recovery Survival rate of those contracting COVID
 #' @param output_switch Should the output be saved
-#' @param rank_assigm Should cases on all days be assigned by ranking 
+#' @param rank_assign Should cases on all days be assigned by ranking 
 #' current_risk
+#' @importFrom utils data write.csv
+#' @export
 run_status <- function(pop, 
                        timestep = 1, 
                        current_risk_beta = 0.008,
@@ -371,9 +374,12 @@ run_status <- function(pop,
                        infection_sd = 3,
                        asymp_rate = 0.7,
                        chance_recovery = 0.95,
-                       output_switch = TRUE,
-                       rank_assign = FALSE) {
-  
+                       output_switch = FALSE,
+                       rank_assign = FALSE, 
+                       model_cases = NULL, 
+                       w = NULL) {
+  data(gam_cases)
+  data(msoas)
   seed_cases <- ifelse(seed_days > 0, TRUE, FALSE)
   
   print(paste("R timestep:", timestep))
@@ -399,7 +405,6 @@ run_status <- function(pop,
   
   #### seeding the first day in high risk MSOAs
   if(timestep==1){
-    data(msoas)
     msoas <- msoas[msoas$risk == "High",]
     pop_hr <- pop %>% filter(area %in% msoas$area & pnothome > 0.3)
     seeds <- sample(1:nrow(pop_hr), size = gam_cases[timestep])
@@ -483,7 +488,7 @@ run_status <- function(pop,
                        presymp_days = df_msoa$presymp_days,
                        symp_days = df_msoa$symp_days)
   
-  if(save_output){write.csv(df_out, paste0(tmp.dir, "/daily_out_", timestep, ".csv"))}
+  if(output_switch){write.csv(df_out, paste0(tmp.dir, "/daily_out_", timestep, ".csv"))}
   
   return(df_out)
 }

@@ -7,15 +7,15 @@
 infection_length(
   df,
   exposed_dist = "weibull",
-  exposed_mean = 3.2,
-  exposed_sd = 1,
+  exposed_mean = 2.56,
+  exposed_sd = 0.72,
   presymp_dist = "weibull",
-  presymp_mean = 3.2,
-  presymp_sd = 1,
+  presymp_mean = 2.3,
+  presymp_sd = 0.35,
   infection_dist = "normal",
-  infection_mean = 14,
-  infection_sd = 2,
-  asymp_rate = 0.5
+  infection_mean = 16,
+  infection_sd = 3,
+  asymp_rate = 0.7
 )
 }
 \arguments{

@@ -238,20 +238,19 @@ test_that("normalizer works", {
 
 test_that("run_status works", {
   
-  df <- data.frame(area = sample(letters[1:26], 100, replace = TRUE),
-                   Age1 = sample(1:10, 100, replace = TRUE),
-                   Sex = sample(0:1, 100, replace = TRUE),
-                   current_risk = runif(100, 0, 10),
-                   pnothome = rnorm(100, 0.7, 0.2),
-                   disease_status = sample(0:6, 100, replace = TRUE),
-                   exposed_days = sample(0:4, 100, replace = TRUE),
-                   presymp_days = sample(0:4, 100, replace = TRUE),
-                   symp_days = sample(0:21, 100, replace = TRUE),
-                   id = 1:100,
-                   house_id = sample(1:25, 100, replace = TRUE))
+  df <- data.frame(area = sample(c("E02004143","E02004144","E02004149","E02004154","E02004157","E02004159","E02004162","E02004163","E02004208"), 100000, replace = TRUE),
+                   Age1 = sample(1:10, 100000, replace = TRUE),
+                   Sex = sample(0:1, 100000, replace = TRUE),
+                   current_risk = runif(100, 0, 100000),
+                   pnothome = rnorm(100000, 0.7, 0.2),
+                   disease_status = sample(0:6, 100000, replace = TRUE),
+                   exposed_days = sample(0:4, 100000, replace = TRUE),
+                   presymp_days = sample(0:4, 100000, replace = TRUE),
+                   symp_days = sample(0:21, 100000, replace = TRUE),
+                   id = 1:100000,
+                   house_id = sample(1:25, 100000, replace = TRUE))
   
-  run_status(pop = df)
-  
+  expect_true(nrow(run_status(pop = df)) == nrow(df))
 })
 
 
