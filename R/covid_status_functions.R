@@ -180,16 +180,17 @@ rank_assign <- function(df, daily_case){
 #' @return An updated version of the input list with the new cases having
 #' infection lengths assigned
 #' @export
-infection_length <- function(df, exposed_dist = "weibull",
-                             exposed_mean = 3.2,
-                             exposed_sd = 1,
-                             presymp_dist = "weibull",
-                             presymp_mean = 3.2,
-                             presymp_sd = 1,
-                             infection_dist = "normal",
-                             infection_mean = 14,
-                             infection_sd = 2,
-                             asymp_rate=0.5){
+infection_length <- function(df, 
+                             exposed_dist,
+                             exposed_mean,
+                             exposed_sd,
+                             presymp_dist,
+                             presymp_mean,
+                             presymp_sd,
+                             infection_dist,
+                             infection_mean,
+                             infection_sd,
+                             asymp_rate){
 
   susceptible <- which(df$status == 0)
 
@@ -321,3 +322,172 @@ normalizer <- function(x ,lower_bound, upper_bound, xmin, xmax){
   normx <-  (upper_bound - lower_bound) * (x - xmin)/(xmax - xmin) + lower_bound
   return(normx)
 }
+
+
+#' Run the infection model
+#' 
+#' Function that wraps all the other functions 
+#' together to run the infection model each day
+#'
+#' @param pop Microsim population - output of the 
+#' spatial interaction model
+#' @param timestep The day of the model run
+#' @param current_risk_beta The multiplier of each individuals
+#'  hazard used to calculate probability of contracting COVID
+#' @param risk_cap The value at which an individuals hazard is capped
+#' @param seed_days The number of days which the model is seeded for -
+#' based on PHE cases data
+#' @param exposed_dist The distribution of the length of the exposed stage
+#' @param exposed_mean The mean length of the exposed stage
+#' @param exposed_sd The standard deviation of the length of 
+#' the exposed stage
+#' @param presymp_dist The distribution of the length of the 
+#' presymptomatic stage
+#' @param presymp_mean The mean length of the presymptomatic stage
+#' @param presymp_sd The standard deviation of the length of the 
+#' presymptomatic stage
+#' @param infection_dist The distribution of the length of the symptomatic stage
+#' @param infection_mean The mean length of the symptomatic stage
+#' @param infection_sd The standard deviation of the length of the 
+#' symptomatic stage
+#' @param asymp_rate Percentage of infected people that are asymptomatic
+#' @param chance_recovery Survival rate of those contracting COVID
+#' @param output_switch Should the output be saved
+#' @param rank_assigm Should cases on all days be assigned by ranking 
+#' current_risk
+run_status <- function(pop, 
+                       timestep = 1, 
+                       current_risk_beta = 0.008,
+                       risk_cap = 5,
+                       seed_days = 10,
+                       exposed_dist = "weibull",
+                       exposed_mean = 2.56,
+                       exposed_sd = 0.72,
+                       presymp_dist = "weibull",
+                       presymp_mean = 2.3,
+                       presymp_sd = 0.35,
+                       infection_dist = "normal",
+                       infection_mean =  16,
+                       infection_sd = 3,
+                       asymp_rate = 0.7,
+                       chance_recovery = 0.95,
+                       output_switch = TRUE,
+                       rank_assign = FALSE) {
+  
+  seed_cases <- ifelse(seed_days > 0, TRUE, FALSE)
+  
+  print(paste("R timestep:", timestep))
+  
+  if(timestep==1) {
+    tmp.dir <<- paste(getwd(),"/output/",Sys.time(),sep="")
+    if(!dir.exists(tmp.dir)){
+      dir.create(tmp.dir, recursive = TRUE)
+    }
+  }
+  
+  if(output_switch){write.csv(pop, paste0( tmp.dir,"/daily_", timestep, ".csv"))}
+  
+  df_cr_in <-create_input(micro_sim_pop  = pop,
+                          vars = c("area",   # must match columns in the population data.frame
+                                   "house_id",
+                                   "id",
+                                   "current_risk"))
+  
+  other_betas <- list(current_risk = current_risk_beta)
+  
+  df_msoa <- df_cr_in
+  
+  #### seeding the first day in high risk MSOAs
+  if(timestep==1){
+    data(msoas)
+    msoas <- msoas[msoas$risk == "High",]
+    pop_hr <- pop %>% filter(area %in% msoas$area & pnothome > 0.3)
+    seeds <- sample(1:nrow(pop_hr), size = gam_cases[timestep])
+    seeds_id <- pop_hr$id[seeds]
+    df_msoa$new_status[df_msoa$id %in% seeds_id] <- 1
+    print("First day seeded")
+  }
+  
+  df_sum_betas <- sum_betas(df = df_msoa,
+                            betas = other_betas, 
+                            risk_cap_val = risk_cap)
+  print("betas calculated")
+  
+  df_prob <- covid_prob(df = df_sum_betas)
+  
+  print("probabilities calculated")
+  
+  if(timestep > 1){
+    df_ass <- case_assign(df = df_prob,
+                          tmp.dir=tmp.dir, 
+                          save_output = output_switch)
+  } else {
+    df_ass <- df_prob
+  }
+  
+  print("cases assigned")
+  print(paste0("PHE cases ", gam_cases[timestep]))
+  
+  model_cases[timestep] <- (sum(df_prob$new_status == 0) - sum(df_ass$new_status == 0))
+  print(paste0("model cases ", model_cases[timestep]))
+  print(paste0("Adjusted PHE cases ", gam_cases[timestep]))
+  
+  w[timestep] <- (sum(df_prob$new_status == 0) - sum(df_ass$new_status == 0))/gam_cases[timestep]
+  print(paste0("w is ", w[timestep]))
+  
+  if(!is.finite(w[timestep])){
+    w[timestep] <- 0
+  }
+  
+  if(timestep > 1 & timestep <= seed_days & seed_cases == TRUE){
+    df_ass <- rank_assign(df = df_prob, daily_case = gam_cases[timestep])
+    print(paste0((sum(df_prob$new_status == 0) - sum(df_ass$new_status == 0))," cases reassigned"))
+  }
+  
+  
+  if((rank_assign == TRUE & seed_cases == FALSE) | (rank_assign == TRUE & seed_cases == TRUE & timestep > seed_days)){
+    if(timestep > 1 & (w[timestep] <= 0.9 | w[timestep] >= 1.1)){
+      df_ass <- rank_assign(df = df_prob, daily_case = gam_cases[timestep])
+      print(paste0((sum(df_prob$new_status == 0) - sum(df_ass$new_status == 0))," cases reassigned"))
+    }
+  }
+  
+  
+  df_inf <- infection_length(df = df_ass,
+                             exposed_dist = exposed_dist,
+                             exposed_mean = exposed_mean,
+                             exposed_sd = exposed_sd,
+                             presymp_dist = presymp_dist,
+                             presymp_mean = presymp_mean,
+                             presymp_sd = presymp_sd,
+                             infection_dist = infection_dist,
+                             infection_mean =  infection_mean,
+                             infection_sd = infection_sd,
+                             asymp_rate = asymp_rate)
+  
+  print("infection and recovery lengths assigned")
+  
+  df_rem <- removed(df_inf, chance_recovery = chance_recovery)
+  print("individuals removed")
+  
+  df_rec <- recalc_sympdays(df_rem) 
+  print("updating infection lengths")
+  
+  df_msoa <- df_rec #area_cov(df = df_rec, area = area, hid = hid)
+  
+  df_out <- data.frame(area=df_msoa$area,
+                       ID=df_msoa$id,
+                       house_id=df_msoa$house_id,
+                       disease_status=df_msoa$new_status,
+                       exposed_days = df_msoa$exposed_days,
+                       presymp_days = df_msoa$presymp_days,
+                       symp_days = df_msoa$symp_days)
+  
+  if(save_output){write.csv(df_out, paste0(tmp.dir, "/daily_out_", timestep, ".csv"))}
+  
+  return(df_out)
+}
+
+
+
+
