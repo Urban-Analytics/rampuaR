@@ -9,3 +9,6 @@
 
 # any archived binaries
 **/*.tar.gz
+
+# local build tools
+**/localbuildtools/*

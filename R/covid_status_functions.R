@@ -240,8 +240,9 @@ infection_length <- function(df,
 #'
 #' @param df Input list of the function - output of the infection_length function
 #' @param chance_recovery Probability of an infected individual recovering
-#' @return An updated version of the input list with the status updates for those
-#' days left in stage = 0.
+#' @return An updated version of the input list with the status updates for those 
+#' in their last day of being symptomatic/asymptomatic
+#'
 #' @export
 removed <- function(df,chance_recovery = 0.95){
 
@@ -258,21 +259,42 @@ removed <- function(df,chance_recovery = 0.95){
 
   df$new_status[removed_cases_asymp] <- 5
   
-  # 
-  # if(unique(df$age) > 6){
-  #   
-  #   df <- data.frame(min_age = c(0,10,20,30,40,50,60,70,80),
-  #                    max_age = c(9,19,29,39,49,59,69,79,120),
-  #                    recovery_rate = c(0.9999839, 0.9999305, 0.999691, 0.999156, 0.99839, 0.99405, 0.9807, 0.9572, 0.922))
-  #   
-  #    df$new_status[removed_cases[which(df$age >= 10 & df$age <= 19)]] <- 3 + stats::rbinom(n = length(removed_cases),
-  #                                                                           size = 1,
-  #                                                                           prob = (1 - 0.9999305))
-  #      }
-  # 
-  # 
-  
+   
   return(df)
+}
+
+#' Removes cases based on age
+#' 
+#' The survival rate of infected individuals decreases with age
+#' 
+#' @param df Input list of the function - output of the infection_length function.
+#' Must contain an age item.
+#' @return An updated version of the input list with the status updates for those 
+#' in their last day of being symptomatic/asymptomatic
+#' @export
+removed_age <- function(df){
+  
+    sr_df <- data.frame(min_age = c(0,10,20,30,40,50,60,70,80),
+                     max_age = c(9,19,29,39,49,59,69,79,120),
+                     recovery_rate = c(0.9999839, 0.9999305, 0.999691, 0.999156, 0.99839, 0.99405, 0.9807, 0.9572, 0.922))
+
+    for (i in 1:nrow(sr_df)){
+      
+      removed_cases_symp <- which(df$exposed_days == 0 & df$presymp_days == 0 & df$symp_days == 1 
+                                  & (df$status == 3 | df$new_status == 3)
+                                  & df$age >= sr_df$min_age[i] & df$age <= sr_df$max_age[i])
+      
+      removed_cases_asymp <- which(df$exposed_days == 0 & df$presymp_days == 0 & df$symp_days == 1 & 
+                                     (df$status == 4 | df$new_status == 4)
+                                   & df$age >= sr_df$min_age[i] & df$age <= sr_df$max_age[i])
+      
+      df$new_status[removed_cases_symp] <- 5 + stats::rbinom(n = length(removed_cases_symp),
+                                                             size = 1,
+                                                             prob = (1-sr_df$recovery_rate[i]))
+      
+      df$new_status[removed_cases_asymp] <- 5
+    }
+    return(df)
 }
 
 
@@ -406,7 +428,7 @@ run_status <- function(pop,
   #### seeding the first day in high risk MSOAs
   if(timestep==1){
     msoas <- msoas[msoas$risk == "High",]
-    pop_hr <- pop %>% filter(area %in% msoas$area & pnothome > 0.3)
+    pop_hr <- pop %>% dplyr::filter(area %in% msoas$area & pnothome > 0.3)
     seeds <- sample(1:nrow(pop_hr), size = gam_cases[timestep])
     seeds_id <- pop_hr$id[seeds]
     df_msoa$new_status[df_msoa$id %in% seeds_id] <- 1
