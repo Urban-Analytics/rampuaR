@@ -73,61 +73,6 @@ msoa_lad_code_matcher <- function(pop, lad_codes){
   return(pop_out)
 }
 
-#' Matching LAD/County to Google Mobility Region
-#' 
-#' Matching the name of the LAD/County to the closest matching Google Mobility 
-#' Region
-#' 
-#' @param lad_string The LAD to try and match to Google Mobility region
-#' @param county_string The county to try and match to Google Mobility region
-#' @param strings_to_match Vector of sub-regions from the Google Mobility Data
-#' @return The name of the Google Mobility sub-region that most closely
-#'  matches the LAD/county name
-#' @importFrom RecordLinkage levenshteinSim
-#' @export
-closest_string <- function(lad_string, county_string, strings_to_match){
-  
-  lad_string <- gsub(", City of", "", lad_string) # Hull causing grief
-  
-  lad_max_mat <- max(levenshteinSim(lad_string,strings_to_match))
-  county_max_mat <- max(levenshteinSim(county_string, strings_to_match))
-  
-  if (lad_max_mat >= county_max_mat){
-    lad_max_which <- which.max(levenshteinSim(lad_string,strings_to_match))
-    return(strings_to_match[lad_max_which])
-  }
-  
-  if (county_max_mat > lad_max_mat){
-    county_max_which <- which.max(levenshteinSim(county_string,strings_to_match))
-    return(strings_to_match[county_max_which])
-  } else{
-    return("")
-  }
-}
-
-
-#' Filtering out the Google Mobility for the LAD or county
-#' 
-#' @param gm Google Mobility data - output of gm_file_download.
-#' @param lad_name Name of LAD which we want Google Mobility data for.
-#' @param county_name Name of county which we want Google Mobility data for, 
-#' lad_name should be geographically within county_name.
-#' 
-#' @return Google Mobility data for the given LAD or county
-#' 
-#' @export
-gm_filter <- function(gm, lad_name, county_name){
-  
-  gm_filt <- gm[gm$sub_region_1 == closest_string(lad_string = lad_name,
-                                                  county_string = county_name,
-                                                  strings_to_match = gm$sub_region_1),]
-  
-  if(nrow(gm_filt) == 0){
-    gm_filt <- paste0("No matching Google Mobility data for ", name)
-  }
-  
-  return(gm_filt)  
-}
 
 #' Format Google Mobility data
 #' 

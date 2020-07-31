@@ -1,5 +1,4 @@
 library(mgcv)
-library(RecordLinkage)
 library(tidyr)
 library(dplyr)
 
@@ -64,43 +63,6 @@ test_that("msoa_lad_code_matcher works", {
 })
 
 
-test_that("closest_string works",{
-  
-  lad_string <- "Blaby"
-  county_string <- "Leicestershire"
-  strings_to_match <- c("Leicestershire", "Leicester", "Gloucestershire")
-  
-  expect_equal(closest_string(lad_string = lad_string, 
-                 county_string = county_string,
-                 strings_to_match = strings_to_match), "Leicestershire")
-  
-  lad_string <- "Leicester"
-  
-  expect_equal(closest_string(lad_string = lad_string, 
-                              county_string = county_string,
-                              strings_to_match = strings_to_match), "Leicester")
-  
-})
-
-test_that("gm_filter works", {
-  
-  download.file(
-    "https://www.gstatic.com/covid19/mobility/Global_Mobility_Report.csv", "temp_file.csv")
-  gm <- read.csv("temp_file.csv", stringsAsFactors = FALSE)
-  
-  lad_name <- "Blaby"
-  county_name <- "Leicestershire"
-  
-  expect_lt(nrow(gm_filter(gm = gm,
-            lad_name = lad_name, 
-            county_name = county_name)), nrow(gm))
-  
-  expect_gt(nrow(gm_filter(gm = gm,
-                           lad_name = lad_name, 
-                           county_name = county_name)), 0)
-  
-  file.remove("temp_file.csv")
-})
 
 
 test_that("format_gm works", {
