@@ -12,8 +12,8 @@ removed(df, chance_recovery = 0.95)
 \item{chance_recovery}{Probability of an infected individual recovering}
 }
 \value{
-An updated version of the input list with the status updates for those 
-in their last day of being symptomatic/asymptomatic
+An updated version of the input list with the status updates for those
+days left in stage = 0.
 }
 \description{
 For symptomatic individuals they have a 95% chance of recovery,

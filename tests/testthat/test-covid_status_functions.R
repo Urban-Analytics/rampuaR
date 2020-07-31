@@ -191,22 +191,6 @@ test_that("removed works", {
 
 })
 
-
-test_that("removed_age works", {
-  df <- list(id = 1:100,
-             age = sample(1:100, 100),
-             exposed_days = rep(0,100),
-             presymp_days = rep(0,100),
-             symp_days = rep(1,100),
-             status =c(rep(3,50), rep(4, 50)),
-             new_status =c(rep(3,50), rep(4, 50)))
-  
-  removed_age(df)
-  
-  expect_true(all(removed_age(df)[["new_status"]] >= df$status))
-})
-
-
 test_that("recalc_sympdays works", {
 
   df <- list(id = 1:10,
