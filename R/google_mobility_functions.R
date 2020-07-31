@@ -58,10 +58,6 @@ county_file_download <- function(force_county = FALSE){
 #' @importFrom dplyr distinct
 #' @export
 msoa_lad_code_matcher <- function(pop, lad_codes){
-
-  if(typeof(lad_codes$CTYUA16NM) != "character"){
-    stop("Error: the CTYUA16NM column data type is not character.")
-  }
   
   code_match <- lad_codes %>% 
    filter(MSOA11CD %in% pop$area) %>% 
