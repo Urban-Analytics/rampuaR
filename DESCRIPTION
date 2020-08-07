@@ -18,7 +18,10 @@ Imports:
     stats, 
     utils,
     mgcv,
-    tidyselect
+    tidyselect,
+    ffbase
 RoxygenNote: 7.1.1
 Suggests: 
     testthat
+Depends: 
+    R (>= 2.10)
