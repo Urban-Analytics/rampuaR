@@ -10,7 +10,7 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Imports:
-    RecordLinkage,
+    stringdist,
     tidyr (>= 1.1.0), 
     readr, 
     mixdist,
@@ -18,8 +18,7 @@ Imports:
     stats, 
     utils,
     mgcv,
-    tidyselect,
-    ffbase
+    tidyselect
 RoxygenNote: 7.1.1
 Suggests: 
     testthat
