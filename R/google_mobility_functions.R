@@ -83,22 +83,22 @@ msoa_lad_code_matcher <- function(pop, lad_codes){
 #' @param strings_to_match Vector of sub-regions from the Google Mobility Data
 #' @return The name of the Google Mobility sub-region that most closely
 #'  matches the LAD/county name
-#' @importFrom RecordLinkage levenshteinSim
+#' @importFrom stringdist stringsim
 #' @export
 closest_string <- function(lad_string, county_string, strings_to_match){
   
   lad_string <- gsub(", City of", "", lad_string) # Hull causing grief
   
-  lad_max_mat <- max(levenshteinSim(lad_string,strings_to_match))
-  county_max_mat <- max(levenshteinSim(county_string, strings_to_match))
+  lad_max_mat <- max(stringsim(lad_string,strings_to_match))
+  county_max_mat <- max(stringsim(county_string, strings_to_match))
   
   if (lad_max_mat >= county_max_mat){
-    lad_max_which <- which.max(levenshteinSim(lad_string,strings_to_match))
+    lad_max_which <- which.max(stringsim(lad_string,strings_to_match))
     return(strings_to_match[lad_max_which])
   }
   
   if (county_max_mat > lad_max_mat){
-    county_max_which <- which.max(levenshteinSim(county_string,strings_to_match))
+    county_max_which <- which.max(stringsim(county_string,strings_to_match))
     return(strings_to_match[county_max_which])
   } else{
     return("")
