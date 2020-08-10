@@ -280,11 +280,11 @@ removed_age <- function(df){
       
       removed_cases_symp <- which(df$exposed_days == 0 & df$presymp_days == 0 & df$symp_days == 1 
                                   & (df$status == 3 | df$new_status == 3)
-                                  & df$age >= sr_df$min_age[i] & df$age <= sr_df$max_age[i])
+                                  & df$Age1 >= sr_df$min_age[i] & df$Age1 <= sr_df$max_age[i])
       
       removed_cases_asymp <- which(df$exposed_days == 0 & df$presymp_days == 0 & df$symp_days == 1 & 
                                      (df$status == 4 | df$new_status == 4)
-                                   & df$age >= sr_df$min_age[i] & df$age <= sr_df$max_age[i])
+                                   & df$Age1 >= sr_df$min_age[i] & df$Age1 <= sr_df$max_age[i])
       
       df$new_status[removed_cases_symp] <- 5 + stats::rbinom(n = length(removed_cases_symp),
                                                              size = 1,
