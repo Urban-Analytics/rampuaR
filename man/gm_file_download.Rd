@@ -4,11 +4,16 @@
 \alias{gm_file_download}
 \title{Downloading Google Mobility Data}
 \usage{
-gm_file_download(force_gm = FALSE)
+gm_file_download(
+  force_gm = FALSE,
+  destfile = "Google_Global_Mobility_Report.csv"
+)
 }
 \arguments{
 \item{force_gm}{Logical. Should the data be downloaded even if it 
 already exists}
+
+\item{destfile}{The location of the downloaded google mobility data}
 }
 \description{
 Downloading Google Mobility Data

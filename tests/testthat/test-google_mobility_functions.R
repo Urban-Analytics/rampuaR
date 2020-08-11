@@ -5,9 +5,7 @@ library(dplyr)
 
 test_that("gm_file_download works", {
   
-  download.file(
-    "https://www.gstatic.com/covid19/mobility/Global_Mobility_Report.csv", "temp_file.csv")
-  
+  gm_file_download(destfile = "temp_file.csv")
   expect_true(file.exists("temp_file.csv"))
   expect_true(file.size("temp_file.csv") > 0)
   

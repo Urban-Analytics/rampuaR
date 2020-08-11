@@ -2,15 +2,17 @@
 #' 
 #' @param force_gm Logical. Should the data be downloaded even if it 
 #' already exists
+#' @param destfile The location of the downloaded google mobility data
 #' @importFrom utils download.file
 #' @export
-gm_file_download <- function(force_gm = FALSE){
+gm_file_download <- function(force_gm = FALSE, destfile = "Google_Global_Mobility_Report.csv"){
   
   if((force_gm == FALSE &
       !file.exists("Google_Global_Mobility_Report.csv")) | force_gm == TRUE){
     download.file(
       "https://www.gstatic.com/covid19/mobility/Global_Mobility_Report.csv",
-      destfile = "Google_Global_Mobility_Report.csv"
+      destfile = destfile,
+      method = "libcurl"
     )
   }
 }
