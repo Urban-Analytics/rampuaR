@@ -194,7 +194,7 @@ test_that("removed works", {
 
 test_that("removed_age works", {
   df <- list(id = 1:100,
-             age = sample(1:100, 100),
+             Age1 = sample(1:100, 100),
              exposed_days = rep(0,100),
              presymp_days = rep(0,100),
              symp_days = rep(1,100),
