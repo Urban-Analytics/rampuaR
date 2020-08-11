@@ -40,7 +40,8 @@ create_input <-
       symp_days = micro_sim_pop$symp_days,
       probability = rep(0, nrow(micro_sim_pop)),
       status = as.integer(micro_sim_pop$disease_status),
-      new_status = as.integer(micro_sim_pop$disease_status)
+      new_status = as.integer(micro_sim_pop$disease_status),
+      age = as.integer(micro_sim_pop$age)
     )
 
     df <- c(var_list, constant_list)
@@ -280,11 +281,11 @@ removed_age <- function(df){
       
       removed_cases_symp <- which(df$exposed_days == 0 & df$presymp_days == 0 & df$symp_days == 1 
                                   & (df$status == 3 | df$new_status == 3)
-                                  & df$Age1 >= sr_df$min_age[i] & df$Age1 <= sr_df$max_age[i])
+                                  & df$age >= sr_df$min_age[i] & df$age <= sr_df$max_age[i])
       
       removed_cases_asymp <- which(df$exposed_days == 0 & df$presymp_days == 0 & df$symp_days == 1 & 
                                      (df$status == 4 | df$new_status == 4)
-                                   & df$Age1 >= sr_df$min_age[i] & df$Age1 <= sr_df$max_age[i])
+                                   & df$age >= sr_df$min_age[i] & df$age <= sr_df$max_age[i])
       
       df$new_status[removed_cases_symp] <- 5 + stats::rbinom(n = length(removed_cases_symp),
                                                              size = 1,
