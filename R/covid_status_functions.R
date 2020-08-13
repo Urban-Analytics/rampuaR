@@ -16,9 +16,8 @@
 #' @param vars Variables to be kept for use in the infection model
 #' @return A list of data to be used in the infection model
 #' @export
-create_input <-
-  function(micro_sim_pop,
-           vars = NULL) {
+create_input <- function(micro_sim_pop,
+                         vars = NULL){
 
     if (!all(vars %in% colnames(micro_sim_pop))) {
       print(paste0(vars[!vars %in% colnames(micro_sim_pop)], " not in population column names"))
@@ -60,7 +59,9 @@ create_input <-
 #' @param risk_cap_val The value at which current_risk will be capped
 #' @return the sum of betas
 #' @export
-sum_betas <- function(df, betas, risk_cap_val=NA) {
+sum_betas <- function(df, 
+                      betas, 
+                      risk_cap_val=NA){
   
   if(!is.na(risk_cap_val)){
     print(paste0(sum(df$current_risk > 5), " individuals with risk above  ", risk_cap_val))
@@ -92,7 +93,7 @@ sum_betas <- function(df, betas, risk_cap_val=NA) {
 #' @param df The input list - the output from the create_input function
 #' @return An updated version of the input list with the probabilties updated
 #' @export
-covid_prob <- function(df) {
+covid_prob <- function(df){
 
   lpsi <- df$beta0 + df$betaxs
 
@@ -117,7 +118,9 @@ covid_prob <- function(df) {
 #' @param save_output Logical. Should the number of new cases be saved as output.
 #' @return An updated version of the input list with the new cases assigned
 #' @export
-case_assign <- function(df, tmp.dir = getwd(), save_output = TRUE) {
+case_assign <- function(df, 
+                        tmp.dir = getwd(), 
+                        save_output = TRUE){
 
   susceptible <- which(df$status == 0)
 
@@ -152,7 +155,8 @@ case_assign <- function(df, tmp.dir = getwd(), save_output = TRUE) {
 #' @return An updated version of the in put list with new rank assigned cases
 #' added
 #' @export
-rank_assign <- function(df, daily_case){
+rank_assign <- function(df, 
+                        daily_case){
 
   dfw <- data.frame(id = df$id, current_risk = df$current_risk, status = df$status)
   dfw <- dfw[dfw$status == 0,]
@@ -243,7 +247,8 @@ infection_length <- function(df, exposed_dist = "weibull",
 #' in their last day of being symptomatic/asymptomatic
 #'
 #' @export
-removed <- function(df,chance_recovery = 0.95){
+removed <- function(df,
+                    chance_recovery = 0.95){
 
   removed_cases_symp <- which(df$exposed_days == 0 & df$presymp_days == 0 & df$symp_days == 1 & 
                            (df$status == 3 | df$new_status == 3))
@@ -320,7 +325,8 @@ recalc_sympdays <- function(df){
 #' @return An updated version of the input list with the status updates for those
 #' days left in stage = 0.
 #' @export
-run_removal_recalc <- function(df, chance_recovery = 0.95){
+run_removal_recalc <- function(df, 
+                               chance_recovery = 0.95){
   df_tmp <- removed(df, chance_recovery = 0.95)
   df_tmp <- recalc_sympdays(df_tmp)
   return(df_tmp)
@@ -339,7 +345,11 @@ run_removal_recalc <- function(df, chance_recovery = 0.95){
 #' @param xmax Expected maximum value of x
 #' @return A number or vector of numbers between the lower and upper bounds
 #' @export
-normalizer <- function(x ,lower_bound, upper_bound, xmin, xmax){
+normalizer <- function(x, 
+                       lower_bound, 
+                       upper_bound, 
+                       xmin, 
+                       xmax){
 
   normx <-  (upper_bound - lower_bound) * (x - xmin)/(xmax - xmin) + lower_bound
   return(normx)
