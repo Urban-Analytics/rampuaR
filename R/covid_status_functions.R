@@ -168,10 +168,10 @@ rank_assign <- function(df, daily_case){
 #' presymptomatic and symptomatic for.
 #'
 #' @param df Input list of the function - output of an ____assign function
-#' @param exposed_dist The distribution of the length of the exposed stage
+#' @param exposed_dist The distribution of the length of the exposed stage - options: weibull, lognormal, normal
 #' @param exposed_mean The mean length of the exposed stage
 #' @param exposed_sd The standard deviation of the length of the exposed stage
-#' @param presymp_dist The distribution of the length of the presymptomatic stage
+#' @param presymp_dist The distribution of the length of the presymptomatic stage - options: weibull, lognormal, normal
 #' @param presymp_mean The mean length of the presymptomatic stage
 #' @param presymp_sd The standard deviation of the length of the presymptomatic stage
 #' @param infection_dist The distribution of the length of the symptomatic stage
@@ -205,6 +205,10 @@ infection_length <- function(df, exposed_dist = "weibull",
     df$exposed_days[new_cases] <- round(rlnorm(1:length(new_cases), meanlog = log(exposed_mean), sdlog = log(exposed_sd)))
   }
   
+  if (exposed_dist == "normal"){
+    df$exposed_days[new_cases] <- round(stats::rnorm(1:length(new_cases), mean = exposed_mean, sd = exposed_sd))
+  }
+  
   if (presymp_dist == "weibull"){
     wpar <- mixdist::weibullpar(mu = presymp_mean, sigma = presymp_sd, loc = 0)
     df$presymp_days[new_cases] <- round(stats::rweibull(1:length(new_cases), shape = as.numeric(wpar["shape"]), scale = as.numeric(wpar["scale"])),)
@@ -212,6 +216,10 @@ infection_length <- function(df, exposed_dist = "weibull",
   
   if (presymp_dist == "lognormal"){
     df$presymp_days[new_cases] <- round(rlnorm(1:length(new_cases), meanlog = log(presymp_mean), sdlog = log(presymp_sd)))
+  }
+  
+  if (presymp_dist == "normal"){
+    df$presymp_days[new_cases] <- round(stats::rnorm(1:length(new_cases), mean = presymp_mean, sd = presymp_sd))
   }
   
   if (infection_dist == "normal"){
