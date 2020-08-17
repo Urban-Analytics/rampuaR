@@ -335,7 +335,7 @@ recalc_sympdays <- function(df){
 #' @export
 run_removal_recalc <- function(df, 
                                chance_recovery = 0.95){
-  df_tmp <- removed(df, chance_recovery = 0.95)
+  df_tmp <- removed(df, chance_recovery = chance_recovery)
   df_tmp <- recalc_sympdays(df_tmp)
   return(df_tmp)
 }
