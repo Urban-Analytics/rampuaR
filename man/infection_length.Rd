@@ -21,13 +21,13 @@ infection_length(
 \arguments{
 \item{df}{Input list of the function - output of an ____assign function}
 
-\item{exposed_dist}{The distribution of the length of the exposed stage}
+\item{exposed_dist}{The distribution of the length of the exposed stage - options: weibull, lognormal, normal}
 
 \item{exposed_mean}{The mean length of the exposed stage}
 
 \item{exposed_sd}{The standard deviation of the length of the exposed stage}
 
-\item{presymp_dist}{The distribution of the length of the presymptomatic stage}
+\item{presymp_dist}{The distribution of the length of the presymptomatic stage - options: weibull, lognormal, normal}
 
 \item{presymp_mean}{The mean length of the presymptomatic stage}
 

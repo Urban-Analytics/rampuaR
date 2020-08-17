@@ -157,10 +157,16 @@ case_assign <- function(df,
 #' @export
 rank_assign <- function(df, 
                         daily_case){
-
+  
   dfw <- data.frame(id = df$id, current_risk = df$current_risk, status = df$status)
   dfw <- dfw[dfw$status == 0,]
-  rank_inf <- dfw[order(-dfw$current_risk),][1:daily_case,"id"]
+  max_risk <- dfw[dfw$current_risk == max(dfw$current_risk),]
+  
+  if(nrow(max_risk > daily_case)){
+    rank_inf <- sample(max_risk$id, size = daily_case, replace = FALSE)
+  } else{
+    rank_inf <- dfw[order(-dfw$current_risk),][1:daily_case,"id"]
+  }
   inf_ind <- which(df$id %in% rank_inf)
   df$new_status[inf_ind] <- 1
   return(df)
