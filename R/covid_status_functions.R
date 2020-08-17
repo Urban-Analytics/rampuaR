@@ -162,9 +162,9 @@ rank_assign <- function(df,
   dfw <- dfw[dfw$status == 0,]
   max_risk <- dfw[dfw$current_risk == max(dfw$current_risk),]
   
-  if(nrow(max_risk > daily_case)){
+  if(nrow(max_risk) > daily_case){
     rank_inf <- sample(max_risk$id, size = daily_case, replace = FALSE)
-  } else{
+  } else {
     rank_inf <- dfw[order(-dfw$current_risk),][1:daily_case,"id"]
   }
   inf_ind <- which(df$id %in% rank_inf)
