@@ -40,13 +40,40 @@ create_input <- function(micro_sim_pop,
       probability = rep(0, nrow(micro_sim_pop)),
       status = as.integer(micro_sim_pop$disease_status),
       new_status = as.integer(micro_sim_pop$disease_status),
-      age = as.integer(micro_sim_pop$age)
+      age = as.integer(micro_sim_pop$age),
+      mortality_rate = rep(0, nrow(micro_sim_pop))
     )
 
     df <- c(var_list, constant_list)
 
     return(df)
   }
+
+#' Calculating mortality rate based on age and health risks
+#'
+#' @param df The input list - the output from the create_input function
+#' @param obesity The obesity mortality risk multiplier
+#' @export
+#' 
+mortality_rate <- function(df, 
+                           obesity = 1.9){
+
+  df$mortality_rate <- case_when(df$age >= 0 & df$age <=9 ~ 0.0000161,
+                                 df$age >= 10 & df$age <=19 ~ 0.0000695,
+                                 df$age >= 20 & df$age <= 29 ~ 0.000309,
+                                 df$age >= 30 & df$age <= 39 ~ 0.000844,
+                                 df$age >= 40 & df$age <= 49 ~ 0.00161,
+                                 df$age >= 50 & df$age <= 59 ~ 0.00595,
+                                 df$age >= 60 & df$age <= 69 ~ 0.0193,
+                                 df$age >= 70 & df$age <= 79 ~  0.0428,
+                                 df$age >= 80 & df$age <= 120 ~ 0.078)
+  
+  df$mortality_rate <- case_when(df$obese40 == 1 ~ df$mortality_rate * obesity,
+                                 df$obese40 == 0 ~ df$mortality_rate,
+                                 is.na(df$obese40) ~ df$mortality_rate)
+
+  return(df)
+}
 
 #' Summing betas for use in COVID probability calculation
 #'
@@ -292,42 +319,18 @@ removed <- function(df,
 #' @export
 removed_age <- function(df){
   
-    sr_df <- data.frame(min_age = c(0,10,20,30,40,50,60,70,80),
-                     max_age = c(9,19,29,39,49,59,69,79,120),
-                     death_rate = c(0.0000161,0.0000695, 0.000309,  0.000844, 0.00161, 0.00595,0.0193, 0.0428,0.078),
-                     obese = 0)
-    
-    sr_df_ob <- sr_df
-    sr_df_ob$death_rate <- sr_df_ob$death_rate * 1.9
-    sr_df_ob$obese <- 1
-    
-    sr_df <- rbind(sr_df, sr_df_ob)
-    
-    for (i in 1:nrow(sr_df)){
-      
+
       removed_cases_symp <- which(df$exposed_days == 0 & df$presymp_days == 0 & df$symp_days == 1 
-                                  & (df$status == 3 | df$new_status == 3)
-                                  & df$age >= sr_df$min_age[i] & df$age <= sr_df$max_age[i] & sr_df$obese == 0)
-      
-      removed_cases_symp_ob <- which(df$exposed_days == 0 & df$presymp_days == 0 & df$symp_days == 1 
-                                  & (df$status == 3 | df$new_status == 3)
-                                  & df$age >= sr_df$min_age[i] & df$age <= sr_df$max_age[i] & sr_df$obese == 1)
-      
+                                  & (df$status == 3 | df$new_status == 3))
       
       removed_cases_asymp <- which(df$exposed_days == 0 & df$presymp_days == 0 & df$symp_days == 1 & 
-                                     (df$status == 4 | df$new_status == 4)
-                                   & df$age >= sr_df$min_age[i] & df$age <= sr_df$max_age[i])
+                                     (df$status == 4 | df$new_status == 4))
       
       df$new_status[removed_cases_symp] <- 5 + stats::rbinom(n = length(removed_cases_symp),
                                                              size = 1,
-                                                             prob = (sr_df$death_rate[i]))
-      
-      df$new_status[removed_cases_symp_ob] <- 5 + stats::rbinom(n = length(removed_cases_symp_ob),
-                                                             size = 1,
-                                                             prob = (sr_df$death_rate[i]))
-      
+                                                             prob = (sr_df$mortality_rate))
+
       df$new_status[removed_cases_asymp] <- 5
-    }
     return(df)
 }
 
