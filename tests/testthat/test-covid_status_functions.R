@@ -29,6 +29,20 @@ test_that("create_input works",{
 })
 
 
+test_that("mortality rate works", {
+  
+  df <- list(id = sample(1:100, 10, replace = FALSE),
+             age = sample(1:100, 10, replace = FALSE),
+             obese40 = sample(0:1, 10,replace = TRUE),
+             mortality_rate = 0)
+  
+  expect_gt(sum(mortality_rate(df, obesity = 1.9)[["mortality_rate"]]), (df$mortality_rate))
+  expect_equal(mortality_rate(df, obesity = 1.9)[["id"]], df$id)
+  expect_equal(mortality_rate(df, obesity = 1.9)[["age"]], df$age)
+  expect_equal(mortality_rate(df, obesity = 1.9)[["obese40"]], df$obese40)
+  
+})
+
 test_that("sum_betas", {
   
   df <- list(id = sample(1:100, 10, replace = FALSE),
@@ -199,9 +213,8 @@ test_that("removed_age works", {
              presymp_days = rep(0,100),
              symp_days = rep(1,100),
              status =c(rep(3,50), rep(4, 50)),
-             new_status =c(rep(3,50), rep(4, 50)))
-  
-  removed_age(df)
+             new_status =c(rep(3,50), rep(4, 50)),
+             mortality_rate = runif(100, 0, 0.2))
   
   expect_true(all(removed_age(df)[["new_status"]] >= df$status))
 })

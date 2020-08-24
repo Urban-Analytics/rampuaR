@@ -53,6 +53,9 @@ create_input <- function(micro_sim_pop,
 #'
 #' @param df The input list - the output from the create_input function
 #' @param obesity The obesity mortality risk multiplier
+#' @return A list of data to be used in the infection model - 
+#' with updated mortality risk
+#' @importFrom dplyr case_when
 #' @export
 #' 
 mortality_rate <- function(df, 
@@ -328,7 +331,7 @@ removed_age <- function(df){
       
       df$new_status[removed_cases_symp] <- 5 + stats::rbinom(n = length(removed_cases_symp),
                                                              size = 1,
-                                                             prob = (sr_df$mortality_rate))
+                                                             prob = df$mortality_rate)
 
       df$new_status[removed_cases_asymp] <- 5
     return(df)
