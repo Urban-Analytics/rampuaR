@@ -294,13 +294,25 @@ removed_age <- function(df){
   
     sr_df <- data.frame(min_age = c(0,10,20,30,40,50,60,70,80),
                      max_age = c(9,19,29,39,49,59,69,79,120),
-                     recovery_rate = c(0.9999839, 0.9999305, 0.999691, 0.999156, 0.99839, 0.99405, 0.9807, 0.9572, 0.922))
-
+                     death_rate = c(0.0000161,0.0000695, 0.000309,  0.000844, 0.00161, 0.00595,0.0193, 0.0428,0.078),
+                     obese = 0)
+    
+    sr_df_ob <- sr_df
+    sr_df_ob$death_rate <- sr_df_ob$death_rate * 1.9
+    sr_df_ob$obese <- 1
+    
+    sr_df <- rbind(sr_df, sr_df_ob)
+    
     for (i in 1:nrow(sr_df)){
       
       removed_cases_symp <- which(df$exposed_days == 0 & df$presymp_days == 0 & df$symp_days == 1 
                                   & (df$status == 3 | df$new_status == 3)
-                                  & df$age >= sr_df$min_age[i] & df$age <= sr_df$max_age[i])
+                                  & df$age >= sr_df$min_age[i] & df$age <= sr_df$max_age[i] & sr_df$obese == 0)
+      
+      removed_cases_symp_ob <- which(df$exposed_days == 0 & df$presymp_days == 0 & df$symp_days == 1 
+                                  & (df$status == 3 | df$new_status == 3)
+                                  & df$age >= sr_df$min_age[i] & df$age <= sr_df$max_age[i] & sr_df$obese == 1)
+      
       
       removed_cases_asymp <- which(df$exposed_days == 0 & df$presymp_days == 0 & df$symp_days == 1 & 
                                      (df$status == 4 | df$new_status == 4)
@@ -308,7 +320,11 @@ removed_age <- function(df){
       
       df$new_status[removed_cases_symp] <- 5 + stats::rbinom(n = length(removed_cases_symp),
                                                              size = 1,
-                                                             prob = (1-sr_df$recovery_rate[i]))
+                                                             prob = (sr_df$death_rate[i]))
+      
+      df$new_status[removed_cases_symp_ob] <- 5 + stats::rbinom(n = length(removed_cases_symp_ob),
+                                                             size = 1,
+                                                             prob = (sr_df$death_rate[i]))
       
       df$new_status[removed_cases_asymp] <- 5
     }
