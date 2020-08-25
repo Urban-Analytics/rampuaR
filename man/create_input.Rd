@@ -16,5 +16,15 @@ A list of data to be used in the infection model
 }
 \description{
 Formatting the output of the spatial interaction model for use in the
-infection model and selecting which variables should be included
+infection model and selecting which variables should be included.
+}
+\details{
+BMI data recoded as:
+"Not applicable" =  NA
+"Underweight: less than 18.5" = 0
+"Normal: 18.5 to less than 25" = 1
+"Overweight: 25 to less than 30" = 2
+ "Obese I: 30 to less than 35" = 3
+"Obese II: 35 to less than 40" = 4
+"Obese III: 40 or more" = 5
 }

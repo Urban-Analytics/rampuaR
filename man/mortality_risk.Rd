@@ -6,7 +6,10 @@
 \usage{
 mortality_risk(
   df,
-  obesity = NULL,
+  obesity_40 = 1,
+  obesity_35 = 1,
+  obesity_30 = 1,
+  overweight = 1,
   cvd = NULL,
   diabetes = NULL,
   bloodpressure = NULL
@@ -15,7 +18,13 @@ mortality_risk(
 \arguments{
 \item{df}{The input list - the output from the create_input function}
 
-\item{obesity}{The obesity mortality risk multiplier}
+\item{obesity_40}{The obesity mortality risk multiplier for BMI > 40}
+
+\item{obesity_35}{The obesity mortality risk multiplier for 35 < BMI < 40}
+
+\item{obesity_30}{The obesity mortality risk multiplier for 30 < BMI < 35}
+
+\item{overweight}{The obesity mortality risk multiplier for 25 < BMI < 30}
 
 \item{cvd}{The cardiovascular disease mortality risk multiplier}
 

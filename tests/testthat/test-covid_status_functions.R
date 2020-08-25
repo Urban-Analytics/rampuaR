@@ -33,19 +33,19 @@ test_that("mortality risk works", {
   
   df <- list(id = sample(1:100, 10, replace = FALSE),
              age = sample(1:100, 10, replace = FALSE),
-             obese40 = sample(0:1, 10,replace = TRUE),
+             BMIgv6 = sample(0:5, 10,replace = TRUE),
              cvd = sample(0:1, 10,replace = TRUE),
              diabetes = sample(0:1, 10,replace = TRUE),
              bloodpressure = sample(0:1, 10,replace = TRUE),
-             mortality_rate = 0)
+             mortality_rate = rep(0,10))
   
-  expect_gt(sum(mortality_risk(df, obesity = 1.9, cvd = 2, diabetes = 2, bloodpressure = 1.5)[["mortality_risk"]]), (df$mortality_rate))
-  expect_equal(mortality_risk(df, obesity = 1.9, cvd = 2, diabetes = 2, bloodpressure = 1.5)[["id"]], df$id)
-  expect_equal(mortality_risk(df, obesity = 1.9, cvd = 2, diabetes = 2, bloodpressure = 1.5)[["age"]], df$age)
-  expect_equal(mortality_risk(df, obesity = 1.9, cvd = 2, diabetes = 2, bloodpressure = 1.5)[["obese40"]], df$obese40)
-  expect_equal(mortality_risk(df, obesity = 1.9, cvd = 2, diabetes = 2, bloodpressure = 1.5)[["cvd"]], df$cvd)
-  expect_equal(mortality_risk(df, obesity = 1.9, cvd = 2, diabetes = 2, bloodpressure = 1.5)[["diabetes"]], df$diabetes)
-  expect_equal(mortality_risk(df, obesity = 1.9, cvd = 2, diabetes = 2, bloodpressure = 1.5)[["bloodpressure"]], df$bloodpressure)
+  expect_gt(sum(mortality_risk(df, obesity_40 = 1.9, cvd = 2, diabetes = 2, bloodpressure = 1.5)[["mortality_risk"]]), sum(df$mortality_risk))
+  expect_equal(mortality_risk(df, obesity_40 = 1.9, cvd = 2, diabetes = 2, bloodpressure = 1.5)[["id"]], df$id)
+  expect_equal(mortality_risk(df, obesity_40 = 1.9, cvd = 2, diabetes = 2, bloodpressure = 1.5)[["age"]], df$age)
+  expect_equal(mortality_risk(df, obesity_40 = 1.9, cvd = 2, diabetes = 2, bloodpressure = 1.5)[["obese40"]], df$obese40)
+  expect_equal(mortality_risk(df, obesity_40 = 1.9, cvd = 2, diabetes = 2, bloodpressure = 1.5)[["cvd"]], df$cvd)
+  expect_equal(mortality_risk(df, obesity_40 = 1.9, cvd = 2, diabetes = 2, bloodpressure = 1.5)[["diabetes"]], df$diabetes)
+  expect_equal(mortality_risk(df, obesity_40 = 1.9, cvd = 2, diabetes = 2, bloodpressure = 1.5)[["bloodpressure"]], df$bloodpressure)
   
 })
 
@@ -220,7 +220,7 @@ test_that("removed_age works", {
              symp_days = rep(1,100),
              status =c(rep(3,50), rep(4, 50)),
              new_status =c(rep(3,50), rep(4, 50)),
-             mortality_rate = runif(100, 0, 0.2))
+             mortality_risk = runif(100, 0, 0.2))
   
   expect_true(all(removed_age(df)[["new_status"]] >= df$status))
 })
