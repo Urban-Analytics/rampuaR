@@ -29,17 +29,23 @@ test_that("create_input works",{
 })
 
 
-test_that("mortality rate works", {
+test_that("mortality risk works", {
   
   df <- list(id = sample(1:100, 10, replace = FALSE),
              age = sample(1:100, 10, replace = FALSE),
              obese40 = sample(0:1, 10,replace = TRUE),
+             cvd = sample(0:1, 10,replace = TRUE),
+             diabetes = sample(0:1, 10,replace = TRUE),
+             bloodpressure = sample(0:1, 10,replace = TRUE),
              mortality_rate = 0)
   
-  expect_gt(sum(mortality_rate(df, obesity = 1.9)[["mortality_rate"]]), (df$mortality_rate))
-  expect_equal(mortality_rate(df, obesity = 1.9)[["id"]], df$id)
-  expect_equal(mortality_rate(df, obesity = 1.9)[["age"]], df$age)
-  expect_equal(mortality_rate(df, obesity = 1.9)[["obese40"]], df$obese40)
+  expect_gt(sum(mortality_risk(df, obesity = 1.9, cvd = 2, diabetes = 2, bloodpressure = 1.5)[["mortality_rate"]]), (df$mortality_rate))
+  expect_equal(mortality_risk(df, obesity = 1.9, cvd = 2, diabetes = 2, bloodpressure = 1.5)[["id"]], df$id)
+  expect_equal(mortality_risk(df, obesity = 1.9, cvd = 2, diabetes = 2, bloodpressure = 1.5)[["age"]], df$age)
+  expect_equal(mortality_risk(df, obesity = 1.9, cvd = 2, diabetes = 2, bloodpressure = 1.5)[["obese40"]], df$obese40)
+  expect_equal(mortality_risk(df, obesity = 1.9, cvd = 2, diabetes = 2, bloodpressure = 1.5)[["cvd"]], df$cvd)
+  expect_equal(mortality_risk(df, obesity = 1.9, cvd = 2, diabetes = 2, bloodpressure = 1.5)[["diabetes"]], df$diabetes)
+  expect_equal(mortality_risk(df, obesity = 1.9, cvd = 2, diabetes = 2, bloodpressure = 1.5)[["bloodpressure"]], df$bloodpressure)
   
 })
 

@@ -53,12 +53,15 @@ create_input <- function(micro_sim_pop,
 #'
 #' @param df The input list - the output from the create_input function
 #' @param obesity The obesity mortality risk multiplier
+#' @param cvd The cardiovascular disease mortality risk multiplier
+#' @param diabetes The disease mortality risk multiplier
+#' @param bloodpressure The bloodpressure/hypertension mortality risk multiplier
 #' @return A list of data to be used in the infection model - 
 #' with updated mortality risk
 #' @importFrom dplyr case_when
 #' @export
 #' 
-mortality_rate <- function(df, 
+mortality_risk <- function(df, 
                            obesity = NULL,
                            cvd = NULL,
                            diabetes = NULL,
