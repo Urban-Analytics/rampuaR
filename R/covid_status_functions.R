@@ -41,7 +41,7 @@ create_input <- function(micro_sim_pop,
       status = as.integer(micro_sim_pop$disease_status),
       new_status = as.integer(micro_sim_pop$disease_status),
       age = as.integer(micro_sim_pop$age),
-      mortality_rate = rep(0, nrow(micro_sim_pop))
+      mortality_risk = rep(0, nrow(micro_sim_pop))
     )
 
     df <- c(var_list, constant_list)
