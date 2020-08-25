@@ -10,7 +10,16 @@
 #' Formatting data for infection model
 #'
 #' Formatting the output of the spatial interaction model for use in the
-#' infection model and selecting which variables should be included
+#' infection model and selecting which variables should be included.
+#' 
+#' BMI data recoded as:
+#' "Not applicable" =  NA
+#' "Underweight: less than 18.5" = 0
+#' "Normal: 18.5 to less than 25" = 1
+#' "Overweight: 25 to less than 30" = 2
+#'  "Obese I: 30 to less than 35" = 3
+#' "Obese II: 35 to less than 40" = 4
+#' "Obese III: 40 or more" = 5
 #'
 #' @param micro_sim_pop The output of the spatial interaction model
 #' @param vars Variables to be kept for use in the infection model
@@ -43,6 +52,17 @@ create_input <- function(micro_sim_pop,
       age = as.integer(micro_sim_pop$age),
       mortality_risk = rep(0, nrow(micro_sim_pop))
     )
+    
+    if("BMIvg6" %in% vars){
+      
+      var_list$BMIvg6[var_list$BMIvg6 == "Not applicable"] <- NA
+      var_list$BMIvg6[var_list$BMIvg6 == "Underweight: less than 18.5"] <- 0
+      var_list$BMIvg6[var_list$BMIvg6 == "Normal: 18.5 to less than 25"] <- 1
+      var_list$BMIvg6[var_list$BMIvg6 == "Overweight: 25 to less than 30"] <- 2
+      var_list$BMIvg6[var_list$BMIvg6 == "Obese I: 30 to less than 35"] <- 3
+      var_list$BMIvg6[var_list$BMIvg6 == "Obese II: 35 to less than 40"] <- 4
+      var_list$BMIvg6[var_list$BMIvg6 == "Obese III: 40 or more"] <- 5
+    }
 
     df <- c(var_list, constant_list)
 
@@ -62,7 +82,10 @@ create_input <- function(micro_sim_pop,
 #' @export
 #' 
 mortality_risk <- function(df, 
-                           obesity = NULL,
+                           obesity_40 = 1,
+                           obesity_35 = 1,
+                           obesity_30 = 1,
+                           overweight = 1,
                            cvd = NULL,
                            diabetes = NULL,
                            bloodpressure = NULL){
@@ -77,11 +100,12 @@ mortality_risk <- function(df,
                                  df$age >= 70 & df$age <= 79 ~  0.0428,
                                  df$age >= 80 & df$age <= 120 ~ 0.078)
   
-  if(!is.null(obesity)){
-    df$mortality_risk <- case_when(df$obese40 == 1 ~ df$mortality_risk * obesity,
-                                   df$obese40 == 0 ~ df$mortality_risk,
-                                   is.na(df$obese40) ~ df$mortality_risk)
-  }
+    df$mortality_risk <- case_when(df$BMIvg6 == 5 ~ df$mortality_risk * obesity_40,
+                                   df$BMIvg6 == 4 ~ df$mortality_risk * obesity_35,
+                                   df$BMIvg6 == 3 ~ df$mortality_risk * obesity_30,
+                                   df$BMIvg6 == 2 ~ df$mortality_risk * overweight,
+                                   is.na(df$BMIvg6) | df$BMIvg6 == 1 | df$BMIvg6 == 0 ~ df$mortality_risk)
+
  
   if(!is.null(cvd)){
     df$mortality_risk <- case_when(df$cvd == 1 ~ df$mortality_risk * cvd,
