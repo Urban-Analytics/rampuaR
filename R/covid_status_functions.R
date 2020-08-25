@@ -358,7 +358,7 @@ removed_age <- function(df){
       
       df$new_status[removed_cases_symp] <- 5 + stats::rbinom(n = length(removed_cases_symp),
                                                              size = 1,
-                                                             prob = df$mortality_rate)
+                                                             prob = df$mortality_risk)
 
       df$new_status[removed_cases_asymp] <- 5
     return(df)
