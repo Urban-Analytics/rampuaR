@@ -67,7 +67,7 @@ mortality_risk <- function(df,
                            diabetes = NULL,
                            bloodpressure = NULL){
 
-  df$mortality_rate <- case_when(df$age >= 0 & df$age <=9 ~ 0.0000161,
+  df$mortality_risk <- case_when(df$age >= 0 & df$age <=9 ~ 0.0000161,
                                  df$age >= 10 & df$age <=19 ~ 0.0000695,
                                  df$age >= 20 & df$age <= 29 ~ 0.000309,
                                  df$age >= 30 & df$age <= 39 ~ 0.000844,
@@ -78,27 +78,27 @@ mortality_risk <- function(df,
                                  df$age >= 80 & df$age <= 120 ~ 0.078)
   
   if(!is.null(obesity)){
-    df$mortality_rate <- case_when(df$obese40 == 1 ~ df$mortality_rate * obesity,
-                                   df$obese40 == 0 ~ df$mortality_rate,
-                                   is.na(df$obese40) ~ df$mortality_rate)
+    df$mortality_risk <- case_when(df$obese40 == 1 ~ df$mortality_risk * obesity,
+                                   df$obese40 == 0 ~ df$mortality_risk,
+                                   is.na(df$obese40) ~ df$mortality_risk)
   }
  
   if(!is.null(cvd)){
-    df$mortality_rate <- case_when(df$cvd == 1 ~ df$mortality_rate * cvd,
-                                   df$cvd == 0 ~ df$mortality_rate,
-                                   is.na(df$cvd) ~ df$mortality_rate)
+    df$mortality_risk <- case_when(df$cvd == 1 ~ df$mortality_risk * cvd,
+                                   df$cvd == 0 ~ df$mortality_risk,
+                                   is.na(df$cvd) ~ df$mortality_risk)
   }
  
   if(!is.null(diabetes)){
-    df$mortality_rate <- case_when(df$diabetes == 1 ~ df$mortality_rate * diabetes,
-                                   df$diabetes == 0 ~ df$mortality_rate,
-                                   is.na(df$diabetes) ~ df$mortality_rate)
+    df$mortality_risk <- case_when(df$diabetes == 1 ~ df$mortality_risk * diabetes,
+                                   df$diabetes == 0 ~ df$mortality_risk,
+                                   is.na(df$diabetes) ~ df$mortality_risk)
   }
   
   if(!is.null(bloodpressure)){
-    df$mortality_rate <- case_when(df$bloodpressure == 1 ~ df$mortality_rate * bloodpressure,
-                                   df$bloodpressure == 0 ~ df$mortality_rate,
-                                   is.na(df$bloodpressure) ~ df$mortality_rate)
+    df$mortality_risk <- case_when(df$bloodpressure == 1 ~ df$mortality_risk * bloodpressure,
+                                   df$bloodpressure == 0 ~ df$mortality_risk,
+                                   is.na(df$bloodpressure) ~ df$mortality_risk)
   }
  
   
