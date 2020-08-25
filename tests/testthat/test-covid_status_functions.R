@@ -39,7 +39,7 @@ test_that("mortality risk works", {
              bloodpressure = sample(0:1, 10,replace = TRUE),
              mortality_rate = 0)
   
-  expect_gt(sum(mortality_risk(df, obesity = 1.9, cvd = 2, diabetes = 2, bloodpressure = 1.5)[["mortality_rate"]]), (df$mortality_rate))
+  expect_gt(sum(mortality_risk(df, obesity = 1.9, cvd = 2, diabetes = 2, bloodpressure = 1.5)[["mortality_risk"]]), (df$mortality_rate))
   expect_equal(mortality_risk(df, obesity = 1.9, cvd = 2, diabetes = 2, bloodpressure = 1.5)[["id"]], df$id)
   expect_equal(mortality_risk(df, obesity = 1.9, cvd = 2, diabetes = 2, bloodpressure = 1.5)[["age"]], df$age)
   expect_equal(mortality_risk(df, obesity = 1.9, cvd = 2, diabetes = 2, bloodpressure = 1.5)[["obese40"]], df$obese40)
