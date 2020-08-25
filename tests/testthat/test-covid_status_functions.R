@@ -33,7 +33,7 @@ test_that("mortality risk works", {
   
   df <- list(id = sample(1:100, 10, replace = FALSE),
              age = sample(1:100, 10, replace = FALSE),
-             BMIgv6 = sample(0:5, 10,replace = TRUE),
+             BMIvg6 = sample(0:5, 10,replace = TRUE),
              cvd = sample(0:1, 10,replace = TRUE),
              diabetes = sample(0:1, 10,replace = TRUE),
              bloodpressure = sample(0:1, 10,replace = TRUE),
