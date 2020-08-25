@@ -59,7 +59,10 @@ create_input <- function(micro_sim_pop,
 #' @export
 #' 
 mortality_rate <- function(df, 
-                           obesity = 1.9){
+                           obesity = NULL,
+                           cvd = NULL,
+                           diabetes = NULL,
+                           bloodpressure = NULL){
 
   df$mortality_rate <- case_when(df$age >= 0 & df$age <=9 ~ 0.0000161,
                                  df$age >= 10 & df$age <=19 ~ 0.0000695,
@@ -71,10 +74,31 @@ mortality_rate <- function(df,
                                  df$age >= 70 & df$age <= 79 ~  0.0428,
                                  df$age >= 80 & df$age <= 120 ~ 0.078)
   
-  df$mortality_rate <- case_when(df$obese40 == 1 ~ df$mortality_rate * obesity,
-                                 df$obese40 == 0 ~ df$mortality_rate,
-                                 is.na(df$obese40) ~ df$mortality_rate)
-
+  if(!is.null(obesity)){
+    df$mortality_rate <- case_when(df$obese40 == 1 ~ df$mortality_rate * obesity,
+                                   df$obese40 == 0 ~ df$mortality_rate,
+                                   is.na(df$obese40) ~ df$mortality_rate)
+  }
+ 
+  if(!is.null(cvd)){
+    df$mortality_rate <- case_when(df$cvd == 1 ~ df$mortality_rate * cvd,
+                                   df$cvd == 0 ~ df$mortality_rate,
+                                   is.na(df$cvd) ~ df$mortality_rate)
+  }
+ 
+  if(!is.null(diabetes)){
+    df$mortality_rate <- case_when(df$diabetes == 1 ~ df$mortality_rate * diabetes,
+                                   df$diabetes == 0 ~ df$mortality_rate,
+                                   is.na(df$diabetes) ~ df$mortality_rate)
+  }
+  
+  if(!is.null(bloodpressure)){
+    df$mortality_rate <- case_when(df$bloodpressure == 1 ~ df$mortality_rate * bloodpressure,
+                                   df$bloodpressure == 0 ~ df$mortality_rate,
+                                   is.na(df$bloodpressure) ~ df$mortality_rate)
+  }
+ 
+  
   return(df)
 }
 
