@@ -18,7 +18,8 @@ Imports:
     stats, 
     utils,
     mgcv,
-    tidyselect
+    tidyselect,
+    xml2
 RoxygenNote: 7.1.1
 Suggests: 
     testthat
