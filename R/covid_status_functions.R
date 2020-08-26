@@ -201,11 +201,11 @@ infection_length <- function(df, exposed_dist = "weibull",
                              infection_mean = 14,
                              infection_sd = 2,
                              asymp_rate=0.5){
-
+  
   susceptible <- which(df$status == 0)
-
+  
   new_cases <- which((df$new_status - df$status ==1) & df$status == 0)
-
+  
   if (exposed_dist == "weibull"){
     wpar <- mixdist::weibullpar(mu = exposed_mean, sigma = exposed_sd, loc = 0)
     df$exposed_days[new_cases] <- round(stats::rweibull(1:length(new_cases), shape = as.numeric(wpar["shape"]), scale = as.numeric(wpar["scale"])),)
@@ -235,20 +235,29 @@ infection_length <- function(df, exposed_dist = "weibull",
   if (infection_dist == "normal"){
     df$symp_days[new_cases] <- round(stats::rnorm(1:length(new_cases), mean = infection_mean, sd = infection_sd))
   }
-
+  
+  
+  
   becoming_pre_sympt <- which((df$status == 1 | df$new_status == 1) & df$exposed_days == 0) ### maybe should be status rather than new_status
   
-  df$new_status[becoming_pre_sympt] <- 2 
+  asymp_presymp <- stats::rbinom(n = length(becoming_pre_sympt),
+                                 size = 1,
+                                 prob = asymp_rate)
+  
+  asymp_presymp[asymp_presymp == 0] <- 2
+  asymp_presymp[asymp_presymp == 1] <- 4
+  
+  df$new_status[becoming_pre_sympt] <- asymp_presymp 
   
   #switching people from being pre symptomatic to symptomatic and infected
   becoming_sympt <- which((df$status == 2 | df$new_status == 2) & df$presymp_days == 0) ### maybe should be status rather than new_status
   #df$new_status[becoming_sympt] <- 2
-  df$new_status[becoming_sympt] <- 3 + stats::rbinom(n = length(becoming_sympt),
-                                                    size = 1,
-                                                    prob = (asymp_rate))
+  
+  df$new_status[becoming_sympt] <- 3
   
   return(df)
 }
+
 
 #' Removes cases
 #'
