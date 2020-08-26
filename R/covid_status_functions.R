@@ -333,6 +333,8 @@ infection_length <- function(df, exposed_dist = "weibull",
   
   df$new_status[becoming_pre_sympt] <- asymp_presymp 
   
+  df$presymp_days[df$new_status == 4  %in% becoming_pre_sympt] <- 0 
+  
   #switching people from being pre symptomatic to symptomatic and infected
   becoming_sympt <- which((df$status == 2 | df$new_status == 2) & df$presymp_days == 0) ### maybe should be status rather than new_status
   #df$new_status[becoming_sympt] <- 2
