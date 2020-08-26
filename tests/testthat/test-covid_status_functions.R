@@ -167,7 +167,7 @@ test_that("infection_length works", {
   expect_equal(infection_length(df)[["hid_status"]], df$hid_status)
   expect_equal(infection_length(df)[["status"]], df$status)
   expect_equal(infection_length(df)[["probability"]], df$probability)
-  expect_equal(sum(infection_length(df)[["presymp_days"]] >0) - sum(df$presymp_days > 0),sum(df$status == 0 & df$new_status == 1))
+  expect_equal(sum(infection_length(df)[["symp_days"]] >0) - sum(df$symp_days > 0),sum(df$status == 0 & df$new_status == 1))
 
 })
 
