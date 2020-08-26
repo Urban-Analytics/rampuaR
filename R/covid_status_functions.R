@@ -333,6 +333,7 @@ infection_length <- function(df, exposed_dist = "weibull",
   
   df$new_status[becoming_pre_sympt] <- asymp_presymp 
   
+  #ignoring the presymp days of asymp people - could add this onto the asymptomatic length?
   df$presymp_days[df$new_status == 4  %in% becoming_pre_sympt] <- 0 
   
   #switching people from being pre symptomatic to symptomatic and infected
