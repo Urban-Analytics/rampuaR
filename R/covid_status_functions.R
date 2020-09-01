@@ -236,6 +236,10 @@ infection_length <- function(df, exposed_dist = "weibull",
     df$symp_days[new_cases] <- round(stats::rnorm(1:length(new_cases), mean = infection_mean, sd = infection_sd))
   }
   
+  if (infection_dist == "lognormal"){
+    df$symp_days[new_cases] <- round(stats::rnorm(1:length(new_cases), mean = log(infection_mean), sd = log(infection_sd)))
+  }
+  
   
   
   becoming_pre_sympt <- which((df$status == 1 | df$new_status == 1) & df$exposed_days == 0) ### maybe should be status rather than new_status
