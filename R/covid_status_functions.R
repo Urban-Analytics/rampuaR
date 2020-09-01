@@ -213,8 +213,7 @@ case_assign <- function(df,
                                        prob = df$probability[susceptible])
 
 
-  
-if(file.exists("new_cases.csv")==FALSE) {
+  if(file.exists("new_cases.csv")==FALSE) {
     ncase <- sum(df$new_status[susceptible])
   } else {
     ncase <- utils::read.csv("new_cases.csv")
@@ -320,6 +319,10 @@ infection_length <- function(df, exposed_dist = "weibull",
   
   if (infection_dist == "normal"){
     df$symp_days[new_cases] <- round(stats::rnorm(1:length(new_cases), mean = infection_mean, sd = infection_sd))
+  }
+  
+  if (infection_dist == "lognormal"){
+    df$symp_days[new_cases] <- round(stats::rnorm(1:length(new_cases), mean = log(infection_mean), sd = log(infection_sd)))
   }
   
   
