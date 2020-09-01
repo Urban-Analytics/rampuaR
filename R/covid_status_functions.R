@@ -212,7 +212,9 @@ case_assign <- function(df,
                                        size = 1,
                                        prob = df$probability[susceptible])
 
-  if(file.exists(paste0(tmp.dir,"new_cases.csv"))==FALSE) {
+
+  
+if(!file.exists("new_cases.csv")==FALSE) {
     ncase <- sum(df$new_status[susceptible])
   } else {
     ncase <- utils::read.csv("new_cases.csv")
