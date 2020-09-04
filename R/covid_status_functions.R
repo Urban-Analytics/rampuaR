@@ -145,6 +145,7 @@ mortality_risk <- function(df,
 #' @export
 sum_betas <- function(df, 
                       betas, 
+                      multipliers,
                       risk_cap_val=NA){
   
   if(!is.na(risk_cap_val)){
@@ -163,6 +164,12 @@ sum_betas <- function(df,
   
   beta_names <- beta_names[beta_names %in% names(df)]
   beta_out_sums <- df[[beta_names]] * betas[[beta_names]]
+  
+  if("overweight_mplier" %in% names(multipliers)){
+    
+    beta_out_sums[which(df["BMIvg6"] >= 2)] <- beta_out_sums[which(df["BMIvg6"] >= 2)] * multipliers[["overweight_mplier"]]
+    
+  }
   
   df$betaxs <- beta_out_sums
   
