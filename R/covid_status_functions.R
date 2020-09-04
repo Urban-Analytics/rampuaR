@@ -167,7 +167,7 @@ sum_betas <- function(df,
   
   if("overweight_mplier" %in% names(multipliers)){
     
-    beta_out_sums[which(df["BMIvg6"] >= 2)] <- beta_out_sums[which(df["BMIvg6"] >= 2)] * multipliers[["overweight_mplier"]]
+    beta_out_sums[which(df[["BMIvg6"]] >= 2)] <- beta_out_sums[which(df[["BMIvg6"]] >= 2)] * multipliers[["overweight_mplier"]]
     
   }
   
