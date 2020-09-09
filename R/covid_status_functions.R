@@ -103,12 +103,12 @@ mortality_risk <- function(df,
                                  df$age >= 70 & df$age <= 79 ~  0.0428,
                                  df$age >= 80 & df$age <= 120 ~ 0.078)
   
-    df$mortality_risk <- case_when(df$BMIvg6 == "Obese III: 40 or more" ~ df$mortality_risk * obesity_40,
-                                   df$BMIvg6 == "Obese II: 35 to less than 40" ~ df$mortality_risk * obesity_35,
-                                   df$BMIvg6 == "Obese I: 30 to less than 35" ~ df$mortality_risk * obesity_30,
-                                   df$BMIvg6 == "Overweight: 25 to less than 30" ~ df$mortality_risk * overweight,
-                                   is.na(df$BMIvg6) | df$BMIvg6 == "Normal: 18.5 to less than 25" | df$BMIvg6 == "Underweight: less than 18.5" ~ df$mortality_risk)
-
+  df$mortality_risk <- case_when(df$BMIvg6 == "Obese III: 40 or more" ~ df$mortality_risk * obesity_40,
+                                 df$BMIvg6 == "Obese II: 35 to less than 40" ~ df$mortality_risk * obesity_35,
+                                 df$BMIvg6 == "Obese I: 30 to less than 35" ~ df$mortality_risk * obesity_30,
+                                 df$BMIvg6 == "Overweight: 25 to less than 30" ~ df$mortality_risk * overweight,
+                                 is.na(df$BMIvg6) | df$BMIvg6 == "Not applicable" | df$BMIvg6 == "Normal: 18.5 to less than 25" | df$BMIvg6 == "Underweight: less than 18.5" ~ df$mortality_risk)
+  
  
   if(!is.null(cvd)){
     df$mortality_risk <- case_when(df$cvd == 1 ~ df$mortality_risk * cvd,
