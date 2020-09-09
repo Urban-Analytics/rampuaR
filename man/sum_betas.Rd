@@ -4,7 +4,7 @@
 \alias{sum_betas}
 \title{Summing betas for use in COVID probability calculation}
 \usage{
-sum_betas(df, betas, risk_cap_val = NA)
+sum_betas(df, betas, multipliers, risk_cap_val = NA)
 }
 \arguments{
 \item{df}{The input list - the output from the create_input function}
