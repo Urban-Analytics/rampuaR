@@ -53,16 +53,16 @@ create_input <- function(micro_sim_pop,
       mortality_risk = rep(0, nrow(micro_sim_pop))
     )
     
-    if("BMIvg6" %in% vars){
-      
-      var_list$BMIvg6[var_list$BMIvg6 == "Not applicable"] <- NA
-      var_list$BMIvg6[var_list$BMIvg6 == "Underweight: less than 18.5"] <- 0
-      var_list$BMIvg6[var_list$BMIvg6 == "Normal: 18.5 to less than 25"] <- 1
-      var_list$BMIvg6[var_list$BMIvg6 == "Overweight: 25 to less than 30"] <- 2
-      var_list$BMIvg6[var_list$BMIvg6 == "Obese I: 30 to less than 35"] <- 3
-      var_list$BMIvg6[var_list$BMIvg6 == "Obese II: 35 to less than 40"] <- 4
-      var_list$BMIvg6[var_list$BMIvg6 == "Obese III: 40 or more"] <- 5
-    }
+    # if("BMIvg6" %in% vars){
+    #   
+    #   var_list$BMIvg6[var_list$BMIvg6 == "Not applicable"] <- NA
+    #   var_list$BMIvg6[var_list$BMIvg6 == "Underweight: less than 18.5"] <- 0
+    #   var_list$BMIvg6[var_list$BMIvg6 == "Normal: 18.5 to less than 25"] <- 1
+    #   var_list$BMIvg6[var_list$BMIvg6 == "Overweight: 25 to less than 30"] <- 2
+    #   var_list$BMIvg6[var_list$BMIvg6 == "Obese I: 30 to less than 35"] <- 3
+    #   var_list$BMIvg6[var_list$BMIvg6 == "Obese II: 35 to less than 40"] <- 4
+    #   var_list$BMIvg6[var_list$BMIvg6 == "Obese III: 40 or more"] <- 5
+    # }
 
     df <- c(var_list, constant_list)
 
@@ -103,11 +103,11 @@ mortality_risk <- function(df,
                                  df$age >= 70 & df$age <= 79 ~  0.0428,
                                  df$age >= 80 & df$age <= 120 ~ 0.078)
   
-    df$mortality_risk <- case_when(df$BMIvg6 == 5 ~ df$mortality_risk * obesity_40,
-                                   df$BMIvg6 == 4 ~ df$mortality_risk * obesity_35,
-                                   df$BMIvg6 == 3 ~ df$mortality_risk * obesity_30,
-                                   df$BMIvg6 == 2 ~ df$mortality_risk * overweight,
-                                   is.na(df$BMIvg6) | df$BMIvg6 == 1 | df$BMIvg6 == 0 ~ df$mortality_risk)
+    df$mortality_risk <- case_when(df$BMIvg6 == "Obese III: 40 or more" ~ df$mortality_risk * obesity_40,
+                                   df$BMIvg6 == "Obese II: 35 to less than 40" ~ df$mortality_risk * obesity_35,
+                                   df$BMIvg6 == "Obese I: 30 to less than 35" ~ df$mortality_risk * obesity_30,
+                                   df$BMIvg6 == "Overweight: 25 to less than 30" ~ df$mortality_risk * overweight,
+                                   is.na(df$BMIvg6) | df$BMIvg6 == "Normal: 18.5 to less than 25" | df$BMIvg6 == "Underweight: less than 18.5" ~ df$mortality_risk)
 
  
   if(!is.null(cvd)){
@@ -167,8 +167,11 @@ sum_betas <- function(df,
   
   if("overweight_mplier" %in% names(multipliers)){
     
-    beta_out_sums[which(df[["BMIvg6"]] >= 2)] <- beta_out_sums[which(df[["BMIvg6"]] >= 2)] * multipliers[["overweight_mplier"]]
-    
+    beta_out_sums[which(df[["BMIvg6"]] == "Overweight: 25 to less than 30")] <- beta_out_sums[which(df[["BMIvg6"]] == "Overweight: 25 to less than 30")] * multipliers[["overweight_mplier"]]
+    beta_out_sums[which(df[["BMIvg6"]] == "Obese I: 30 to less than 35")] <- beta_out_sums[which(df[["BMIvg6"]] == "Obese I: 30 to less than 35")] * multipliers[["overweight_mplier"]]
+    beta_out_sums[which(df[["BMIvg6"]] == "Obese II: 35 to less than 40")] <- beta_out_sums[which(df[["BMIvg6"]] == "Obese II: 35 to less than 40")] * multipliers[["overweight_mplier"]]
+    beta_out_sums[which(df[["BMIvg6"]] == "Obese III: 40 or more")] <- beta_out_sums[which(df[["BMIvg6"]] == "Obese III: 40 or more")] * multipliers[["overweight_mplier"]]
+   
   }
   
   df$betaxs <- beta_out_sums
