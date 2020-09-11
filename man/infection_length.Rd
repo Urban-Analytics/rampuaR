@@ -15,7 +15,8 @@ infection_length(
   infection_dist = "normal",
   infection_mean = 14,
   infection_sd = 2,
-  asymp_rate = 0.5
+  asymp_rate = 0.5,
+  overweight_sympt_mplier = 1
 )
 }
 \arguments{

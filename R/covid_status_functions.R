@@ -336,7 +336,7 @@ infection_length <- function(df, exposed_dist = "weibull",
                                  size = 1,
                                  prob = asymp_rate)
   
-  asymp_presymp <- asymp_presymp * overweight_sympt_mplier
+  print(overweight_sympt_mplier)
   
   asymp_presymp[asymp_presymp == 0] <- 2
   asymp_presymp[asymp_presymp == 1] <- 4
