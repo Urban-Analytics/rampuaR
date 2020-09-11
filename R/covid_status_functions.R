@@ -287,7 +287,8 @@ infection_length <- function(df, exposed_dist = "weibull",
                              infection_dist = "normal",
                              infection_mean = 14,
                              infection_sd = 2,
-                             asymp_rate=0.5){
+                             asymp_rate=0.5,
+                             overweight_sympt_multiple = 1){
   
   susceptible <- which(df$status == 0)
   
@@ -334,6 +335,8 @@ infection_length <- function(df, exposed_dist = "weibull",
   asymp_presymp <- stats::rbinom(n = length(becoming_pre_sympt),
                                  size = 1,
                                  prob = asymp_rate)
+  
+  asymp_presymp <- asymp_presymp * overweight_sympt_mplier
   
   asymp_presymp[asymp_presymp == 0] <- 2
   asymp_presymp[asymp_presymp == 1] <- 4
