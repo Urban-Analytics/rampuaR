@@ -145,7 +145,6 @@ mortality_risk <- function(df,
 #' @export
 sum_betas <- function(df, 
                       betas, 
-                      multipliers,
                       risk_cap_val=NA){
   
   if(!is.na(risk_cap_val)){
@@ -275,6 +274,8 @@ rank_assign <- function(df,
 #' @param infection_mean The mean length of the symptomatic stage
 #' @param infection_sd The standard deviation of the length of the symptomatic stage
 #' @param asymp_rate Percentage of infected people that are asymptomatic
+#' @param overweight_sympt_mplier Multiplier to increase an overweight 
+#' individuals chance of becoming symptomatic
 #' @return An updated version of the input list with the new cases having
 #' infection lengths assigned
 #' @export
