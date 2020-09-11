@@ -61,8 +61,8 @@ test_that("sum_betas", {
              status = c(rep(0,5), 1, 2, 3, 4, 0),
              new_status = c(rep(0,5), 1, 2, 3, 4, 0))
   
-  expect_type(sum_betas(df = df, betas = list(current_risk = 0.42), risk_cap_val = 5, multipliers = list(overweight_mplier = 1.46)), "list")
-  expect_length(sum_betas(df = df, betas = list(current_risk = 0.42), risk_cap_val = 5, multipliers = list(overweight_mplier = 1.46))[["betaxs"]], length(df$betaxs))
+  expect_type(sum_betas(df = df, betas = list(current_risk = 0.42), risk_cap_val = 5), "list")
+  expect_length(sum_betas(df = df, betas = list(current_risk = 0.42), risk_cap_val = 5)[["betaxs"]], length(df$betaxs))
   
 })
 

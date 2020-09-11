@@ -165,15 +165,7 @@ sum_betas <- function(df,
   beta_names <- beta_names[beta_names %in% names(df)]
   beta_out_sums <- df[[beta_names]] * betas[[beta_names]]
   
-  if("overweight_mplier" %in% names(multipliers)){
-    
-    beta_out_sums[which(df[["BMIvg6"]] == "Overweight: 25 to less than 30")] <- beta_out_sums[which(df[["BMIvg6"]] == "Overweight: 25 to less than 30")] * multipliers[["overweight_mplier"]]
-    beta_out_sums[which(df[["BMIvg6"]] == "Obese I: 30 to less than 35")] <- beta_out_sums[which(df[["BMIvg6"]] == "Obese I: 30 to less than 35")] * multipliers[["overweight_mplier"]]
-    beta_out_sums[which(df[["BMIvg6"]] == "Obese II: 35 to less than 40")] <- beta_out_sums[which(df[["BMIvg6"]] == "Obese II: 35 to less than 40")] * multipliers[["overweight_mplier"]]
-    beta_out_sums[which(df[["BMIvg6"]] == "Obese III: 40 or more")] <- beta_out_sums[which(df[["BMIvg6"]] == "Obese III: 40 or more")] * multipliers[["overweight_mplier"]]
-   
-  }
-  
+
   df$betaxs <- beta_out_sums
   
   return(df)
