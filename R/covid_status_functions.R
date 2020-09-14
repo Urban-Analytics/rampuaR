@@ -333,10 +333,13 @@ infection_length <- function(df, exposed_dist = "weibull",
   
   ovw_asymp <- which(df$BMIvg6[becoming_pre_sympt] %in% c("Overweight: 25 to less than 30",
                                                           "Obese I: 30 to less than 35",
-                                                          "Obese II: 35 to less than 40"))
+                                                          "Obese II: 35 to less than 40",
+                                                          "Obese III: 40 or more"))
   
   symp_rates <-  rep(1 - asymp_rate, length(becoming_pre_sympt))
   symp_rates[ovw_asymp] <-  symp_rates[ovw_asymp] * overweight_sympt_mplier
+  symp_rates[symp_rates > 1] <- 1
+  symp_rates[symp_rates < 0] <- 0
   
   asymp_presymp <- stats::rbinom(n = length(becoming_pre_sympt),
                                  size = 1,
