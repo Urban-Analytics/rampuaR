@@ -53,17 +53,6 @@ create_input <- function(micro_sim_pop,
       mortality_risk = rep(0, nrow(micro_sim_pop))
     )
     
-    # if("BMIvg6" %in% vars){
-    #   
-    #   var_list$BMIvg6[var_list$BMIvg6 == "Not applicable"] <- NA
-    #   var_list$BMIvg6[var_list$BMIvg6 == "Underweight: less than 18.5"] <- 0
-    #   var_list$BMIvg6[var_list$BMIvg6 == "Normal: 18.5 to less than 25"] <- 1
-    #   var_list$BMIvg6[var_list$BMIvg6 == "Overweight: 25 to less than 30"] <- 2
-    #   var_list$BMIvg6[var_list$BMIvg6 == "Obese I: 30 to less than 35"] <- 3
-    #   var_list$BMIvg6[var_list$BMIvg6 == "Obese II: 35 to less than 40"] <- 4
-    #   var_list$BMIvg6[var_list$BMIvg6 == "Obese III: 40 or more"] <- 5
-    # }
-
     df <- c(var_list, constant_list)
 
     return(df)
