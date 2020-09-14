@@ -331,19 +331,26 @@ infection_length <- function(df, exposed_dist = "weibull",
   
   becoming_pre_sympt <- which((df$status == 1 | df$new_status == 1) & df$exposed_days == 0) ### maybe should be status rather than new_status
   
+  ovw_asymp <- which(df$BMIvg6[becoming_pre_sympt] %in% c("Overweight: 25 to less than 30",
+                                                          "Obese I: 30 to less than 35",
+                                                          "Obese II: 35 to less than 40"))
+  
+  symp_rates <-  rep(1 - asymp_rate, length(becoming_pre_sympt))
+  symp_rates[ovw_asymp] <-  symp_rates[ovw_asymp] * overweight_sympt_mplier
+  
   asymp_presymp <- stats::rbinom(n = length(becoming_pre_sympt),
                                  size = 1,
-                                 prob = asymp_rate)
+                                 prob = symp_rates)
   
   print(overweight_sympt_mplier)
   
-  asymp_presymp[asymp_presymp == 0] <- 2
-  asymp_presymp[asymp_presymp == 1] <- 4
+  asymp_presymp[asymp_presymp == 0] <- 4
+  asymp_presymp[asymp_presymp == 1] <- 2
   
   df$new_status[becoming_pre_sympt] <- asymp_presymp 
   
   #ignoring the presymp days of asymp people - could add this onto the asymptomatic length?
-
+  
   df$presymp_days[which(df$new_status == 4 | df$status == 4)] <- 0
   
   #switching people from being pre symptomatic to symptomatic and infected
