@@ -13,6 +13,7 @@ local_outbreak <- function(df,
                            number_people=100,
                            risk_prob=0.75){
   
+  print(paste("people in msoa ",length(df$probability[df$area==msoa_infect])))
   df$probability[df$area==msoa_infect][1:number_people] <- risk_prob
   
   return(df)
