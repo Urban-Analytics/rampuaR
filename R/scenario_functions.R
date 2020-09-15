@@ -13,7 +13,7 @@ local_outbreak <- function(df,
                            number_people=100,
                            risk_prob=0.75){
   
-  df[df$area==msoa_infect,][1:number_people,'probability'] <- risk_prob
+  df$probability[df$area==msoa_infect][1:number_people] <- risk_prob
   
   return(df)
 }
