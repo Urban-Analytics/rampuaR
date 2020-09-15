@@ -37,5 +37,11 @@
 #' @section run_removal_recalc
 #' Runs the pipeline for removing cases and stepping symptomatic and presymptomatic days
 #' 
+#' #' The  package also has some functions designed to simulate specific scenarios:
+#' local_outbreak
+#' 
+#' @section local_outbreak:
+#' simulates a local outbreak or super spreader event
+#' 
 #' @docType package
 NULL
