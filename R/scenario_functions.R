@@ -19,7 +19,7 @@ local_outbreak <- function(df,
     number_people <- num
   }
   ran_samp <- sample(1:num, number_people)
-  print("Local outbreak - super spreader event! -", num, "people exposed")
+  print(paste(number_people, "people exposed"))
   
   df$probability[df$area==msoa_infect][ran_samp] <- risk_prob
   
