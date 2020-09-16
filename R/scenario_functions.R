@@ -13,8 +13,17 @@ local_outbreak <- function(df,
                            number_people=100,
                            risk_prob=0.75){
   
-  print(paste("people in msoa ",length(df$probability[df$area==msoa_infect])))
-  df$probability[df$area==msoa_infect][1:number_people] <- risk_prob
+  num <- length(df$probability[df$area==msoa_infect])
+  print(paste("people in msoa ",num))
+  if (num<number_people){
+    number_people <- num
+  }
+  ran_samp <- sample(1:num, number_people)
+  df$probability[df$area==msoa_infect][ran_samp] <- risk_prob
   
   return(df)
 }
+
+
+
+
