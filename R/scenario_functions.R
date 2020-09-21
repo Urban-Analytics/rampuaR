@@ -1,7 +1,7 @@
 # Functions for running scenarios
 
-# increase probability of getting covid
-# for people in local outreak msoa
+#' increase probability of getting covid
+#' for people in local outreak msoa
 #' @param df data frame with individuals
 #' @param msoa_infect msoa where the local outbreak occurs
 #' @param number_people number of people at local outbreak event
