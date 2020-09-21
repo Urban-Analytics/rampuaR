@@ -11,6 +11,6 @@ test_that("local_outbreak works",{
              status = c(rep(0,5), 1, 2, 3, 4, 0),
              new_status = c(rep(0,5), 1, 2, 3, 4, 0))
 
-  expect_equal(local_outbreak(df = df, area="ar1")[["id"]], df$id)
+  expect_equal(local_outbreak(df = df, msoa_infect="ar1")[["id"]], df$id)  
 
 })
