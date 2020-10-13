@@ -276,7 +276,7 @@ infection_length <- function(df, exposed_dist = "weibull",
                              infection_mean = 14,
                              infection_sd = 2,
                              asymp_rate=0.5,
-                             overweight_sympt_mplier = 1){
+                             overweight_sympt_mplier = 1.46){
   
   susceptible <- which(df$status == 0)
   
