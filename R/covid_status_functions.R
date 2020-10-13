@@ -53,17 +53,6 @@ create_input <- function(micro_sim_pop,
       mortality_risk = rep(0, nrow(micro_sim_pop))
     )
     
-    # if("BMIvg6" %in% vars){
-    #   
-    #   var_list$BMIvg6[var_list$BMIvg6 == "Not applicable"] <- NA
-    #   var_list$BMIvg6[var_list$BMIvg6 == "Underweight: less than 18.5"] <- 0
-    #   var_list$BMIvg6[var_list$BMIvg6 == "Normal: 18.5 to less than 25"] <- 1
-    #   var_list$BMIvg6[var_list$BMIvg6 == "Overweight: 25 to less than 30"] <- 2
-    #   var_list$BMIvg6[var_list$BMIvg6 == "Obese I: 30 to less than 35"] <- 3
-    #   var_list$BMIvg6[var_list$BMIvg6 == "Obese II: 35 to less than 40"] <- 4
-    #   var_list$BMIvg6[var_list$BMIvg6 == "Obese III: 40 or more"] <- 5
-    # }
-
     df <- c(var_list, constant_list)
 
     return(df)
@@ -163,8 +152,6 @@ sum_betas <- function(df,
   
   beta_names <- beta_names[beta_names %in% names(df)]
   beta_out_sums <- df[[beta_names]] * betas[[beta_names]]
-  
-
   df$betaxs <- beta_out_sums
   
   return(df)
@@ -333,19 +320,29 @@ infection_length <- function(df, exposed_dist = "weibull",
   
   becoming_pre_sympt <- which((df$status == 1 | df$new_status == 1) & df$exposed_days == 0) ### maybe should be status rather than new_status
   
+  ovw_asymp <- which(df$BMIvg6[becoming_pre_sympt] %in% c("Overweight: 25 to less than 30",
+                                                          "Obese I: 30 to less than 35",
+                                                          "Obese II: 35 to less than 40",
+                                                          "Obese III: 40 or more"))
+  
+  symp_rates <-  rep(1 - asymp_rate, length(becoming_pre_sympt))
+  symp_rates[ovw_asymp] <-  symp_rates[ovw_asymp] * overweight_sympt_mplier
+  symp_rates[symp_rates > 1] <- 1
+  symp_rates[symp_rates < 0] <- 0
+  
   asymp_presymp <- stats::rbinom(n = length(becoming_pre_sympt),
                                  size = 1,
-                                 prob = asymp_rate)
+                                 prob = symp_rates)
   
   print(overweight_sympt_mplier)
   
-  asymp_presymp[asymp_presymp == 0] <- 2
-  asymp_presymp[asymp_presymp == 1] <- 4
+  asymp_presymp[asymp_presymp == 0] <- 4
+  asymp_presymp[asymp_presymp == 1] <- 2
   
   df$new_status[becoming_pre_sympt] <- asymp_presymp 
   
   #ignoring the presymp days of asymp people - could add this onto the asymptomatic length?
-
+  
   df$presymp_days[which(df$new_status == 4 | df$status == 4)] <- 0
   
   #switching people from being pre symptomatic to symptomatic and infected
