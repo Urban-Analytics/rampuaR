@@ -176,7 +176,7 @@ exp_cdf <- function(intensity, dt){
 #' @param df The input list - the output from the create_input function
 #' @return An updated version of the input list with the probabilties updated
 #' @export
-infection_prob <- function((df, dt){
+infection_prob <- function(df, dt = 1){
   #Computes infection probability given exposure, time, demographics, and susceptibility params.
   #Args:
     #dt (float): The amount of time elapsed, always 1.0 in current model
