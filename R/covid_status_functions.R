@@ -157,6 +157,35 @@ sum_betas <- function(df,
   return(df)
 }
 
+
+logistic_map <- function(x){
+  #Logistic function, maps (-inf, inf) to (0, 1).
+  return(1.0 / (1.0 + exp(-x)))
+}
+
+exp_cdf <- function(intensity, dt){
+  #Exponential distribution cdf, used to integrate intensity (0, inf) over time to a probability (0, 1)
+  return(1.0 - exp(-intensity * dt))
+}
+
+infection_prob <- function((dt, exposure, beta_susceptible, demographics){
+  #Computes infection probability given exposure, time, demographics, and susceptibility params.
+  #Args:
+    #dt (float): The amount of time elapsed, always 1.0 in current model
+    #exposure (float): The weighted sum of hazards at places this person visits
+    #beta_suscpetible (np.array): The regression weights mapping demographics to susceptibility.
+    #demographics (np.array): All the demographic variables for this person.
+  
+  # First compute susceptibility, this is just a logistic regression
+  susceptibility <- logistic_map(x = np.dot(beta_susceptible, demographic))
+  
+  # Then compute the infection prob for this time period
+  infection_prob <- exp_cdf(intensity=(susceptibility * exposure), dt=dt)
+  
+  return(infection_prob)
+}
+
+
 #' Calculating probabilities of becoming a COVID case
 #'
 #' Calculating probabilities of becoming a COVID case based on each individuals
