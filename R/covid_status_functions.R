@@ -168,7 +168,15 @@ exp_cdf <- function(intensity, dt){
   return(1.0 - exp(-intensity * dt))
 }
 
-infection_prob <- function((dt, exposure, beta_susceptible, demographics){
+#' Calculating probabilities of becoming a COVID case
+#'
+#' Calculating probabilities of becoming a COVID case based on each individuals
+#' 'current_risk'
+#'
+#' @param df The input list - the output from the create_input function
+#' @return An updated version of the input list with the probabilties updated
+#' @export
+infection_prob <- function((df, dt){
   #Computes infection probability given exposure, time, demographics, and susceptibility params.
   #Args:
     #dt (float): The amount of time elapsed, always 1.0 in current model
@@ -181,8 +189,10 @@ infection_prob <- function((dt, exposure, beta_susceptible, demographics){
       # THESE TWO TOGETHER IS ESSENTIALLY WHAT WE ARE DOING IN THE BETA SUMS FUNCTION, CORRECT?
   
   # First compute susceptibility, this is just a logistic regression
-  susceptibility <- logistic_map(x = np.dot(beta_susceptible, demographic))
+  #susceptibility <- logistic_map(x = np.dot(beta_susceptible, demographic))
+  susceptibility <- 1
   
+  exposure <- df$beta0 + df$betaxs
   # Then compute the infection prob for this time period
   infection_prob <- exp_cdf(intensity=(susceptibility * exposure), dt=dt)
   
