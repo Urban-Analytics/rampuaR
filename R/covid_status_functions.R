@@ -172,9 +172,13 @@ infection_prob <- function((dt, exposure, beta_susceptible, demographics){
   #Computes infection probability given exposure, time, demographics, and susceptibility params.
   #Args:
     #dt (float): The amount of time elapsed, always 1.0 in current model
+  
     #exposure (float): The weighted sum of hazards at places this person visits
+      # I THINK THIS WOULD BE THE CURRENT RISK COLUMN
+  
     #beta_suscpetible (np.array): The regression weights mapping demographics to susceptibility.
     #demographics (np.array): All the demographic variables for this person.
+      # THESE TWO TOGETHER IS ESSENTIALLY WHAT WE ARE DOING IN THE BETA SUMS FUNCTION, CORRECT?
   
   # First compute susceptibility, this is just a logistic regression
   susceptibility <- logistic_map(x = np.dot(beta_susceptible, demographic))
