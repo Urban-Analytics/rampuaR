@@ -182,7 +182,12 @@ infection_prob <- function((dt, exposure, beta_susceptible, demographics){
   # Then compute the infection prob for this time period
   infection_prob <- exp_cdf(intensity=(susceptibility * exposure), dt=dt)
   
-  return(infection_prob)
+  infection_prob[df$status %in% c(5,6)] <- 0 # if they are not susceptible then their probability is 0 of getting it
+  infection_prob[df$status %in% c(1,2,3,4)] <- 1 # this makes keeping track of who has it easier
+  
+  df$probability <- infection_prob
+  
+  return(probability)
 }
 
 
