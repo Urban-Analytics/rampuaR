@@ -210,7 +210,7 @@ infection_prob <- function(df, dt = 1){
   
   df$probability <- infection_prob
   
-  return(probability)
+  return(df)
 }
 
 
