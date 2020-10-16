@@ -167,7 +167,7 @@ logistic_map <- function(x){
 }
 
 
-#'  #Exponential distribution cdf, used to integrate intensity (0, inf) over time to a probability (0, 1)
+#'  Exponential distribution cdf, used to integrate intensity (0, inf) over time to a probability (0, 1)
 #'  @param intensity current_risk from spatial interaction model
 #'  @param dt timestep to integrate
 #'  @return probability of infection
