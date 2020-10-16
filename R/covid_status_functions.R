@@ -157,15 +157,23 @@ sum_betas <- function(df,
   return(df)
 }
 
-
+#' Function to map susceptibility
+#' @param x factors that might affect susceptibility e.g smoking
+#' @return susceptibility
+#' @export
 logistic_map <- function(x){
   #Logistic function, maps (-inf, inf) to (0, 1).
   return(1.0 / (1.0 + exp(-x)))
 }
 
+
+#'  #Exponential distribution cdf, used to integrate intensity (0, inf) over time to a probability (0, 1)
+#'  @param intensity current_risk from spatial interaction model
+#'  @param dt timestep to integrate
+#'  @return probability of infection
+#'  @export
 exp_cdf <- function(intensity, dt){
-  #Exponential distribution cdf, used to integrate intensity (0, inf) over time to a probability (0, 1)
-  return(1.0 - exp(-intensity * dt))
+   return(1.0 - exp(-intensity * dt))
 }
 
 #' Calculating probabilities of becoming a COVID case
@@ -174,6 +182,7 @@ exp_cdf <- function(intensity, dt){
 #' 'current_risk'
 #'
 #' @param df The input list - the output from the create_input function
+#' @param dt Time unit
 #' @return An updated version of the input list with the probabilties updated
 #' @export
 infection_prob <- function(df, dt = 1){
