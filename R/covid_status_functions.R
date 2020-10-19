@@ -121,6 +121,73 @@ mortality_risk <- function(df,
   return(df)
 }
 
+
+#' Calculating risk of being symptomatic mortality rate based on age 
+#' and health risks
+#'
+#' @param df The input list - the output from the create_input function
+#' @param obesity_40 The obesity mortality risk multiplier for BMI > 40
+#' @param obesity_35 The obesity mortality risk multiplier for 35 < BMI < 40 
+#' @param obesity_30 The obesity mortality risk multiplier for 30 < BMI < 35
+#' @param overweight The obesity mortality risk multiplier for 25 < BMI < 30
+#' @param cvd The cardiovascular disease mortality risk multiplier
+#' @param diabetes The disease mortality risk multiplier
+#' @param bloodpressure The bloodpressure/hypertension mortality risk multiplier
+#' @return A list of data to be used in the infection model - 
+#' with updated mortality risk
+#' @importFrom dplyr case_when
+#' @export
+#' 
+mortality_risk <- function(df, 
+                           obesity_40 = 1,
+                           obesity_35 = 1,
+                           obesity_30 = 1,
+                           overweight = 1,
+                           cvd = NULL,
+                           diabetes = NULL,
+                           bloodpressure = NULL){
+  
+  df$sympt_risk <- case_when(df$age >= 0 & df$age <=9 ~ 0.0000161,
+                                 df$age >= 10 & df$age <=19 ~ 0.0000695,
+                                 df$age >= 20 & df$age <= 29 ~ 0.000309,
+                                 df$age >= 30 & df$age <= 39 ~ 0.000844,
+                                 df$age >= 40 & df$age <= 49 ~ 0.00161,
+                                 df$age >= 50 & df$age <= 59 ~ 0.00595,
+                                 df$age >= 60 & df$age <= 69 ~ 0.0193,
+                                 df$age >= 70 & df$age <= 79 ~  0.0428,
+                                 df$age >= 80 & df$age <= 120 ~ 0.078)
+  
+  df$sympt_risk <- case_when(df$BMIvg6 == "Obese III: 40 or more" ~ df$mortality_risk * obesity_40,
+                                 df$BMIvg6 == "Obese II: 35 to less than 40" ~ df$mortality_risk * obesity_35,
+                                 df$BMIvg6 == "Obese I: 30 to less than 35" ~ df$mortality_risk * obesity_30,
+                                 df$BMIvg6 == "Overweight: 25 to less than 30" ~ df$mortality_risk * overweight,
+                                 is.na(df$BMIvg6) | df$BMIvg6 == "Not applicable" | df$BMIvg6 == "Normal: 18.5 to less than 25" | df$BMIvg6 == "Underweight: less than 18.5" ~ df$mortality_risk)
+  
+  
+  if(!is.null(cvd)){
+    df$sympt_risk <- case_when(df$cvd == 1 ~ df$sympt_risk * cvd,
+                                   df$cvd == 0 ~ df$sympt_risk,
+                                   is.na(df$cvd) ~ df$sympt_risk)
+  }
+  
+  if(!is.null(diabetes)){
+    df$sympt_risk <- case_when(df$diabetes == 1 ~ df$sympt_risk * diabetes,
+                                   df$diabetes == 0 ~ df$sympt_risk,
+                                   is.na(df$diabetes) ~ df$sympt_risk)
+  }
+  
+  if(!is.null(bloodpressure)){
+    df$sympt_risk <- case_when(df$bloodpressure == 1 ~ df$sympt_risk * bloodpressure,
+                                   df$bloodpressure == 0 ~ df$sympt_risk,
+                                   is.na(df$bloodpressure) ~ df$sympt_risk)
+  }
+  
+  
+  return(df)
+}
+
+
+
 #' Summing betas for use in COVID probability calculation
 #'
 #' Calculating probabilities of becoming a COVID case based on each individuals

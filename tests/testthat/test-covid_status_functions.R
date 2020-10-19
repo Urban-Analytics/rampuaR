@@ -269,3 +269,14 @@ test_that("normalizer works", {
   expect_equal(normalizer(1, 0,1,0.5,1), 1)
   expect_equal(normalizer(0, 0, 1, 0.5, 1), -1)
 })
+
+test_that("logistic_map works", {
+  expect_lte(max(logistic_map(runif(1000, min = -99999999999, max = 99999999999))), 1)
+  expect_gte(min(logistic_map(runif(1000, min = -99999999999, max = 99999999999))), 0)
+})
+
+
+test_that("exp_cdf works", {
+  expect_lte(max(exp_cdf(rexp(10000, 5), dt = 1)), 1)
+  expect_gte(min(exp_cdf(rexp(10000, 5), dt = 1)), 0)
+})
