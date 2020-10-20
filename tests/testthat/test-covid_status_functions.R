@@ -171,7 +171,8 @@ test_that("infection_length works", {
              symp_days = rep(0,10),
              status = c(rep(0,5), 1, 2, 3, 4, 0),
              new_status = c(rep(1,5), 2, 3, 4, 4, 0),
-             probability = runif(10, 0, 1))
+             probability = runif(10, 0, 1),
+             sympt_risk = runif(10, 0, 1))
 
   timestep <- 1
 
