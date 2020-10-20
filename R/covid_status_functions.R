@@ -450,6 +450,8 @@ infection_length <- function(df, exposed_dist = "weibull",
                                  size = 1,
                                  prob = df$sympt_risk[becoming_pre_sympt])
   
+  print(mean(df$sympt_risk[becoming_pre_sympt]))
+  
   symp_presymp[symp_presymp == 0] <- 4
   symp_presymp[symp_presymp == 1] <- 2
   
