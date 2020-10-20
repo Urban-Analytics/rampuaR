@@ -122,6 +122,30 @@ mortality_risk <- function(df,
   return(df)
 }
 
+#' Function to calculate risk of an individual being symptomatic based on age.
+#' 
+#' @param age A number
+#' 
+#' @return Estimated risk of being symptomatic
+#' @export
+age_symp_risk <- function(age){
+  
+  age_prob <- diff(approx(y = c(0.21, 0.69), x = c(19, 70), xout = 19:70)$y)[1] ##https://www.nature.com/articles/s41591-020-0962-9
+  #figure 3a
+  
+  if (age < 20){
+    sympt_risk <- 0.21
+  }
+  
+  if(age >=20 & age<= 69){
+    sympt_risk <- 0.21 + age_prob*(age-19)
+  }
+  
+  if(age > 69){
+    sympt_risk <- 0.69
+  }
+  return(sympt_risk)  
+}
 
 #' Calculating risk of being symptomatic mortality rate based on age 
 #' and health risks
@@ -136,26 +160,15 @@ mortality_risk <- function(df,
 #' @importFrom dplyr case_when
 #' @export
 #' 
-sympt_risk <- function(df, overweight_sympt_mplier = 1.46,
+sympt_risk <- function(df,
+                       overweight_sympt_mplier = 1.46,
                            cvd = NULL,
                            diabetes = NULL,
                            bloodpressure = NULL){
 
-  age_prob <- diff(approx(y = c(0.21, 0.69), x = c(19, 70), xout = 19:70)$y)[1] ##https://www.nature.com/articles/s41591-020-0962-9
-  #figure 3a
-  
-  if (df$age < 20){
-    df$sympt_risk <- 0.21
-  }
-  
-  if(df$age >=20 & df$age<= 69){
-    df$sympt_risk <- 0.21 + age_prob*(df$age-19)
-  }
-  
-  if(df$age > 69){
-    df$sympt_risk <- 0.69
-  }
+  df$sympt_risk <- sapply(df$age, age_symp_risk)
 
+  
   df$sympt_risk <- case_when(df$BMIvg6 %in% c("Obese III: 40 or more","Obese II: 35 to less than 40","Obese I: 30 to less than 35") ~ df$sympt_risk * overweight_sympt_mplier,
                                  is.na(df$BMIvg6) | df$BMIvg6 == "Not applicable" | df$BMIvg6 == "Normal: 18.5 to less than 25" | df$BMIvg6 == "Underweight: less than 18.5"| df$BMIvg6 == "Overweight: 25 to less than 30"  ~ df$sympt_risk)
 
