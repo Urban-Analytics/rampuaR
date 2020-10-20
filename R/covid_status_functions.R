@@ -167,7 +167,7 @@ sympt_risk <- function(df,
                            bloodpressure = NULL){
 
   df$sympt_risk <- sapply(df$age, age_symp_risk)
-
+  
   
   df$sympt_risk <- case_when(df$BMIvg6 %in% c("Obese III: 40 or more","Obese II: 35 to less than 40","Obese I: 30 to less than 35") ~ df$sympt_risk * overweight_sympt_mplier,
                                  is.na(df$BMIvg6) | df$BMIvg6 == "Not applicable" | df$BMIvg6 == "Normal: 18.5 to less than 25" | df$BMIvg6 == "Underweight: less than 18.5"| df$BMIvg6 == "Overweight: 25 to less than 30"  ~ df$sympt_risk)
@@ -458,6 +458,8 @@ infection_length <- function(df, exposed_dist = "weibull",
   # symp_rates[ovw_asymp] <-  symp_rates[ovw_asymp] * overweight_sympt_mplier
   # symp_rates[symp_rates > 1] <- 1
   # symp_rates[symp_rates < 0] <- 0
+  
+  print(paste0("sympt_risk - becoming sympt ",df$sympt_risk[becoming_pre_sympt]))
   
   symp_presymp <- stats::rbinom(n = length(becoming_pre_sympt),
                                  size = 1,
