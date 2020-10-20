@@ -462,13 +462,10 @@ infection_length <- function(df, exposed_dist = "weibull",
   # symp_rates[symp_rates > 1] <- 1
   # symp_rates[symp_rates < 0] <- 0
   
-  print(paste0("sympt_risk - becoming sympt ",df$sympt_risk[becoming_pre_sympt]))
-  
+ 
   symp_presymp <- stats::rbinom(n = length(becoming_pre_sympt),
                                  size = 1,
                                  prob = df$sympt_risk[becoming_pre_sympt])
-  
-  print(paste0("sympt risk ", df$sympt_risk[becoming_pre_sympt]))
   
   symp_presymp[symp_presymp == 0] <- 4
   symp_presymp[symp_presymp == 1] <- 2
