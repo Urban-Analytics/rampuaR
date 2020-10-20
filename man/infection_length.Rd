@@ -14,9 +14,7 @@ infection_length(
   presymp_sd = 1,
   infection_dist = "normal",
   infection_mean = 14,
-  infection_sd = 2,
-  asymp_rate = 0.5,
-  overweight_sympt_mplier = 1
+  infection_sd = 2
 )
 }
 \arguments{
@@ -39,11 +37,6 @@ infection_length(
 \item{infection_mean}{The mean length of the symptomatic stage}
 
 \item{infection_sd}{The standard deviation of the length of the symptomatic stage}
-
-\item{asymp_rate}{Percentage of infected people that are asymptomatic}
-
-\item{overweight_sympt_mplier}{Multiplier to increase an overweight 
-individuals chance of becoming symptomatic}
 }
 \value{
 An updated version of the input list with the new cases having
