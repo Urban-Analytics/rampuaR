@@ -50,7 +50,8 @@ create_input <- function(micro_sim_pop,
       status = as.integer(micro_sim_pop$disease_status),
       new_status = as.integer(micro_sim_pop$disease_status),
       age = as.integer(micro_sim_pop$age),
-      mortality_risk = rep(0, nrow(micro_sim_pop))
+      mortality_risk = rep(0, nrow(micro_sim_pop)),
+      sympt_risk = rep(0, nrow(micro_sim_pop))
     )
     
     df <- c(var_list, constant_list)
@@ -380,9 +381,6 @@ rank_assign <- function(df,
 #' @param infection_dist The distribution of the length of the symptomatic stage
 #' @param infection_mean The mean length of the symptomatic stage
 #' @param infection_sd The standard deviation of the length of the symptomatic stage
-#' @param asymp_rate Percentage of infected people that are asymptomatic
-#' @param overweight_sympt_mplier Multiplier to increase an overweight 
-#' individuals chance of becoming symptomatic
 #' @return An updated version of the input list with the new cases having
 #' infection lengths assigned
 #' @export
@@ -394,9 +392,7 @@ infection_length <- function(df, exposed_dist = "weibull",
                              presymp_sd = 1,
                              infection_dist = "normal",
                              infection_mean = 14,
-                             infection_sd = 2,
-                             asymp_rate=0.5,
-                             overweight_sympt_mplier = 1){
+                             infection_sd = 2){
   
   susceptible <- which(df$status == 0)
   
@@ -440,26 +436,26 @@ infection_length <- function(df, exposed_dist = "weibull",
   
   becoming_pre_sympt <- which((df$status == 1 | df$new_status == 1) & df$exposed_days == 0) ### maybe should be status rather than new_status
   
-  ovw_asymp <- which(df$BMIvg6[becoming_pre_sympt] %in% c("Overweight: 25 to less than 30",
-                                                          "Obese I: 30 to less than 35",
-                                                          "Obese II: 35 to less than 40",
-                                                          "Obese III: 40 or more"))
+  # ovw_asymp <- which(df$BMIvg6[becoming_pre_sympt] %in% c("Overweight: 25 to less than 30",
+  #                                                         "Obese I: 30 to less than 35",
+  #                                                         "Obese II: 35 to less than 40",
+  #                                                         "Obese III: 40 or more"))
+  # 
+  # symp_rates <-  rep(1 - asymp_rate, length(becoming_pre_sympt))
+  # symp_rates[ovw_asymp] <-  symp_rates[ovw_asymp] * overweight_sympt_mplier
+  # symp_rates[symp_rates > 1] <- 1
+  # symp_rates[symp_rates < 0] <- 0
   
-  symp_rates <-  rep(1 - asymp_rate, length(becoming_pre_sympt))
-  symp_rates[ovw_asymp] <-  symp_rates[ovw_asymp] * overweight_sympt_mplier
-  symp_rates[symp_rates > 1] <- 1
-  symp_rates[symp_rates < 0] <- 0
-  
-  asymp_presymp <- stats::rbinom(n = length(becoming_pre_sympt),
+  symp_presymp <- stats::rbinom(n = length(becoming_pre_sympt),
                                  size = 1,
-                                 prob = symp_rates)
+                                 prob = df$sympt_risk[becoming_pre_sympt])
   
   print(overweight_sympt_mplier)
   
-  asymp_presymp[asymp_presymp == 0] <- 4
-  asymp_presymp[asymp_presymp == 1] <- 2
+  symp_presymp[symp_presymp == 0] <- 4
+  symp_presymp[symp_presymp == 1] <- 2
   
-  df$new_status[becoming_pre_sympt] <- asymp_presymp 
+  df$new_status[becoming_pre_sympt] <- symp_presymp 
   
   #ignoring the presymp days of asymp people - could add this onto the asymptomatic length?
   
