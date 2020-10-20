@@ -190,6 +190,9 @@ sympt_risk <- function(df,
                                    is.na(df$bloodpressure) ~ df$sympt_risk)
   }
 
+  
+  df$sympt_risk[df$sympt_risk > 1] <- 1
+  
   return(df)
 }
 
