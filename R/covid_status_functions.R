@@ -374,7 +374,7 @@ rank_assign <- function(df,
   max_risk <- dfw[dfw$current_risk == max(dfw$current_risk),]
   
   if(nrow(max_risk) > daily_case){
-    rank_inf <- sample(max_risk$id, size = daily_case, replace = FALSE)
+    rank_inf <- withr::with_seed(seed,sample(max_risk$id, size = daily_case, replace = FALSE))
   } else {
     rank_inf <- dfw[order(-dfw$current_risk),][1:daily_case,"id"]
   }
@@ -417,36 +417,36 @@ infection_length <- function(df, exposed_dist = "weibull",
   
   if (exposed_dist == "weibull"){
     wpar <- mixdist::weibullpar(mu = exposed_mean, sigma = exposed_sd, loc = 0)
-    df$exposed_days[new_cases] <- round(stats::rweibull(1:length(new_cases), shape = as.numeric(wpar["shape"]), scale = as.numeric(wpar["scale"])),)
+    df$exposed_days[new_cases] <- round(withr::with_seed(seed,stats::rweibull(1:length(new_cases), shape = as.numeric(wpar["shape"]), scale = as.numeric(wpar["scale"])),))
   }
   
   if (exposed_dist == "lognormal"){
-    df$exposed_days[new_cases] <- round(rlnorm(1:length(new_cases), meanlog = log(exposed_mean), sdlog = log(exposed_sd)))
+    df$exposed_days[new_cases] <- round(withr::with_seed(seed,rlnorm(1:length(new_cases), meanlog = log(exposed_mean), sdlog = log(exposed_sd))))
   }
   
   if (exposed_dist == "normal"){
-    df$exposed_days[new_cases] <- round(stats::rnorm(1:length(new_cases), mean = exposed_mean, sd = exposed_sd))
+    df$exposed_days[new_cases] <- round(withr::with_seed(seed,stats::rnorm(1:length(new_cases), mean = exposed_mean, sd = exposed_sd)))
   }
   
   if (presymp_dist == "weibull"){
     wpar <- mixdist::weibullpar(mu = presymp_mean, sigma = presymp_sd, loc = 0)
-    df$presymp_days[new_cases] <- round(stats::rweibull(1:length(new_cases), shape = as.numeric(wpar["shape"]), scale = as.numeric(wpar["scale"])),)
+    df$presymp_days[new_cases] <- round(withr::with_seed(seed,stats::rweibull(1:length(new_cases), shape = as.numeric(wpar["shape"]), scale = as.numeric(wpar["scale"])),))
   }
   
   if (presymp_dist == "lognormal"){
-    df$presymp_days[new_cases] <- round(rlnorm(1:length(new_cases), meanlog = log(presymp_mean), sdlog = log(presymp_sd)))
+    df$presymp_days[new_cases] <- round(withr::with_seed(seed,rlnorm(1:length(new_cases), meanlog = log(presymp_mean), sdlog = log(presymp_sd))))
   }
   
   if (presymp_dist == "normal"){
-    df$presymp_days[new_cases] <- round(stats::rnorm(1:length(new_cases), mean = presymp_mean, sd = presymp_sd))
+    df$presymp_days[new_cases] <- round(withr::with_seed(seed,stats::rnorm(1:length(new_cases), mean = presymp_mean, sd = presymp_sd)))
   }
   
   if (infection_dist == "normal"){
-    df$symp_days[new_cases] <- round(stats::rnorm(1:length(new_cases), mean = infection_mean, sd = infection_sd))
+    df$symp_days[new_cases] <- round(withr::with_seed(seed,stats::rnorm(1:length(new_cases), mean = infection_mean, sd = infection_sd)))
   }
   
   if (infection_dist == "lognormal"){
-    df$symp_days[new_cases] <- round(stats::rnorm(1:length(new_cases), mean = log(infection_mean), sd = log(infection_sd)))
+    df$symp_days[new_cases] <- round(withr::with_seed(seed,stats::rnorm(1:length(new_cases), mean = log(infection_mean), sd = log(infection_sd))))
   }
   
   
@@ -464,9 +464,9 @@ infection_length <- function(df, exposed_dist = "weibull",
   # symp_rates[symp_rates < 0] <- 0
   
  
-  symp_presymp <- stats::rbinom(n = length(becoming_pre_sympt),
+  symp_presymp <- withr::with_seed(seed,stats::rbinom(n = length(becoming_pre_sympt),
                                  size = 1,
-                                 prob = df$sympt_risk[becoming_pre_sympt])
+                                 prob = df$sympt_risk[becoming_pre_sympt]))
   
   symp_presymp[symp_presymp == 0] <- 4
   symp_presymp[symp_presymp == 1] <- 2
@@ -508,9 +508,9 @@ removed <- function(df,
                                  (df$status == 4 | df$new_status == 4))
   
   
-  df$new_status[removed_cases_symp] <- 5 + stats::rbinom(n = length(removed_cases_symp),
+  df$new_status[removed_cases_symp] <- 5 + withr::with_seed(seed,stats::rbinom(n = length(removed_cases_symp),
                                              size = 1,
-                                             prob = (1-chance_recovery))
+                                             prob = (1-chance_recovery)))
 
   df$new_status[removed_cases_asymp] <- 5
   
@@ -536,9 +536,9 @@ removed_age <- function(df){
       removed_cases_asymp <- which(df$exposed_days == 0 & df$presymp_days == 0 & df$symp_days == 1 & 
                                      (df$status == 4 | df$new_status == 4))
       
-      df$new_status[removed_cases_symp] <- 5 + stats::rbinom(n = length(removed_cases_symp),
+      df$new_status[removed_cases_symp] <- 5 + withr::with_seed(seed,stats::rbinom(n = length(removed_cases_symp),
                                                              size = 1,
-                                                             prob = df$mortality_risk)
+                                                             prob = df$mortality_risk))
 
       df$new_status[removed_cases_asymp] <- 5
     return(df)
