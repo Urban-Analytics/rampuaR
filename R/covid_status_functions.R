@@ -326,6 +326,7 @@ covid_prob <- function(df){
 #' of new cases each day
 #' @param save_output Logical. Should the number of new cases be saved as output.
 #' @return An updated version of the input list with the new cases assigned
+#' @importFrom withr with_seed
 #' @export
 case_assign <- function(df, 
                         tmp.dir = getwd(), 
@@ -333,9 +334,9 @@ case_assign <- function(df,
 
   susceptible <- which(df$status == 0)
 
-  df$new_status[susceptible] <- stats::rbinom(n = length(susceptible),
+  df$new_status[susceptible] <- withr::with_seed(seed, stats::rbinom(n = length(susceptible),
                                        size = 1,
-                                       prob = df$probability[susceptible])
+                                       prob = df$probability[susceptible]))
 
 
   if(file.exists("new_cases.csv")==FALSE) {
