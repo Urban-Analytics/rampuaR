@@ -444,6 +444,11 @@ infection_length <- function(df, exposed_dist = "weibull",
     df$presymp_days[new_cases] <- round(withr::with_seed(seed,stats::rnorm(1:length(new_cases), mean = presymp_mean, sd = presymp_sd)))
   }
   
+  if (infection_dist == "weibull"){
+    wpar <- mixdist::weibullpar(mu = infection_mean, sigma = infection_sd, loc = 0)
+    df$symp_days[new_cases] <- round(withr::with_seed(seed,stats::rweibull(1:length(new_cases), shape = as.numeric(wpar["shape"]), scale = as.numeric(wpar["scale"]))),)
+  }
+  
   if (infection_dist == "normal"){
     df$symp_days[new_cases] <- round(withr::with_seed(seed,stats::rnorm(1:length(new_cases), mean = infection_mean, sd = infection_sd)))
   }
