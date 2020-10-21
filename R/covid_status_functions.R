@@ -420,7 +420,7 @@ infection_length <- function(df, exposed_dist = "weibull",
   
   if (exposed_dist == "weibull"){
     wpar <- mixdist::weibullpar(mu = exposed_mean, sigma = exposed_sd, loc = 0)
-    df$exposed_days[new_cases] <- round(withr::with_seed(seed,stats::rweibull(1:length(new_cases), shape = as.numeric(wpar["shape"]), scale = as.numeric(wpar["scale"])),))
+    df$exposed_days[new_cases] <- round(withr::with_seed(seed,stats::rweibull(1:length(new_cases), shape = as.numeric(wpar["shape"]), scale = as.numeric(wpar["scale"]))),)
   }
   
   if (exposed_dist == "lognormal"){
@@ -433,7 +433,7 @@ infection_length <- function(df, exposed_dist = "weibull",
   
   if (presymp_dist == "weibull"){
     wpar <- mixdist::weibullpar(mu = presymp_mean, sigma = presymp_sd, loc = 0)
-    df$presymp_days[new_cases] <- round(withr::with_seed(seed,stats::rweibull(1:length(new_cases), shape = as.numeric(wpar["shape"]), scale = as.numeric(wpar["scale"])),))
+    df$presymp_days[new_cases] <- round(withr::with_seed(seed,stats::rweibull(1:length(new_cases), shape = as.numeric(wpar["shape"]), scale = as.numeric(wpar["scale"]))),)
   }
   
   if (presymp_dist == "lognormal"){
