@@ -579,8 +579,9 @@ recalc_sympdays <- function(df){
 #' days left in stage = 0.
 #' @export
 run_removal_recalc <- function(df, 
-                               chance_recovery = 0.95){
-  df_tmp <- removed(df, chance_recovery = chance_recovery)
+                               chance_recovery = 0.95, 
+                               seed = seed){
+  df_tmp <- removed(df, chance_recovery = chance_recovery, seed = seed)
   df_tmp <- recalc_sympdays(df_tmp)
   return(df_tmp)
 }

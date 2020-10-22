@@ -268,9 +268,11 @@ test_that("run_removal_recalc works", {
              new_status =c(rep(0,5), rep(2, 5)),
              probability = runif(10, 0, 1))
   
+  seed <- sample(1:100, 1)
+  
   timestep <- 1
 
-  expect_true(all(run_removal_recalc(df, chance_recovery = 0.95)[["new_status"]] >= df$new_status))
+  expect_true(all(run_removal_recalc(df, chance_recovery = 0.95, seed = seed)[["new_status"]] >= df$new_status))
   
 })
 
