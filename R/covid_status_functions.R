@@ -325,6 +325,7 @@ covid_prob <- function(df){
 #' @param tmp.dir Directory for saving a csv recording the number
 #' of new cases each day
 #' @param save_output Logical. Should the number of new cases be saved as output.
+#' @param seed Seed for model run
 #' @return An updated version of the input list with the new cases assigned
 #' @importFrom withr with_seed
 #' @export
@@ -364,6 +365,7 @@ case_assign <- function(df,
 #'
 #' @param df Input list of the model - output of covid_prob function
 #' @param daily_case The desired number of cases that should be assigned on this day
+#' @param seed Seed for model run
 #' @importFrom withr with_seed
 #' @return An updated version of the in put list with new rank assigned cases
 #' added
@@ -401,6 +403,7 @@ rank_assign <- function(df,
 #' @param infection_dist The distribution of the length of the symptomatic stage
 #' @param infection_mean The mean length of the symptomatic stage
 #' @param infection_sd The standard deviation of the length of the symptomatic stage
+#' @param seed Seed for model run
 #' @importFrom withr with_seed
 #' @return An updated version of the input list with the new cases having
 #' infection lengths assigned
@@ -504,6 +507,7 @@ infection_length <- function(df, exposed_dist = "weibull",
 #'
 #' @param df Input list of the function - output of the infection_length function
 #' @param chance_recovery Probability of an infected individual recovering
+#' @param seed Seed for model run
 #' @return An updated version of the input list with the status updates for those 
 #' in their last day of being symptomatic/asymptomatic
 #'
@@ -535,6 +539,7 @@ removed <- function(df,
 #' 
 #' @param df Input list of the function - output of the infection_length function.
 #' Must contain an age item.
+#' @param seed Seed for model run
 #' @return An updated version of the input list with the status updates for those 
 #' in their last day of being symptomatic/asymptomatic
 #' @export
@@ -577,6 +582,7 @@ recalc_sympdays <- function(df){
 #'
 #' @param df Input list of the function - output of the infection_length function
 #' @param chance_recovery Probability of an infected individual recovering
+#' @param seed Seed for model run
 #' @return An updated version of the input list with the status updates for those
 #' days left in stage = 0.
 #' @export
