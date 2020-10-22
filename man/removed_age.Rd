@@ -9,6 +9,8 @@ removed_age(df, seed)
 \arguments{
 \item{df}{Input list of the function - output of the infection_length function.
 Must contain an age item.}
+
+\item{seed}{Seed for model run}
 }
 \value{
 An updated version of the input list with the status updates for those 

@@ -10,6 +10,8 @@ rank_assign(df, daily_case, seed)
 \item{df}{Input list of the model - output of covid_prob function}
 
 \item{daily_case}{The desired number of cases that should be assigned on this day}
+
+\item{seed}{Seed for model run}
 }
 \value{
 An updated version of the in put list with new rank assigned cases

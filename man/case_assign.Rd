@@ -13,6 +13,8 @@ case_assign(df, tmp.dir = getwd(), save_output = TRUE, seed)
 of new cases each day}
 
 \item{save_output}{Logical. Should the number of new cases be saved as output.}
+
+\item{seed}{Seed for model run}
 }
 \value{
 An updated version of the input list with the new cases assigned

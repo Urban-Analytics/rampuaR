@@ -38,6 +38,8 @@ infection_length(
 \item{infection_mean}{The mean length of the symptomatic stage}
 
 \item{infection_sd}{The standard deviation of the length of the symptomatic stage}
+
+\item{seed}{Seed for model run}
 }
 \value{
 An updated version of the input list with the new cases having

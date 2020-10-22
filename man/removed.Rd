@@ -10,6 +10,8 @@ removed(df, chance_recovery = 0.95, seed)
 \item{df}{Input list of the function - output of the infection_length function}
 
 \item{chance_recovery}{Probability of an infected individual recovering}
+
+\item{seed}{Seed for model run}
 }
 \value{
 An updated version of the input list with the status updates for those 
