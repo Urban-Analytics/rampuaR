@@ -110,22 +110,25 @@ test_that("case_assign works", {
              symp_days = sample(5:15, size = 10, replace = TRUE),
              status = c(rep(0,5), 1, 2, 3, 4, 0),
              new_status = c(rep(0,5), 1, 2, 3, 4, 0),
-             probability = runif(10, 0, 1))
+             probability = runif(10, 0, 1)
+             )
 
-  expect_true(all(case_assign(df)[["new_status"]] >= df$new_status))
-  expect_true(all(case_assign(df)[["new_status"]] >= df$status))
+  seed = sample(1:100, 1)
+  
+  expect_true(all(case_assign(df, seed = seed)[["new_status"]] >= df$new_status))
+  expect_true(all(case_assign(df, seed = seed)[["new_status"]] >= df$status))
 
-  expect_type(case_assign(df), "list")
+  expect_type(case_assign(df, seed = seed), "list")
 
-  expect_equal(case_assign(df)[["id"]], df$id)
-  expect_equal(case_assign(df)[["current_risk"]], df$current_risk)
-  expect_equal(case_assign(df)[["beta0"]], df$beta0)
-  expect_equal(case_assign(df)[["betaxs"]], df$betaxs)
-  expect_equal(case_assign(df)[["hid_status"]], df$hid_status)
-  expect_equal(case_assign(df)[["presymp_days"]], df$presymp_days)
-  expect_equal(case_assign(df)[["symp_days"]], df$symp_days)
-  expect_equal(case_assign(df)[["status"]], df$status)
-  expect_equal(case_assign(df)[["probability"]], df$probability)
+  expect_equal(case_assign(df, seed = seed)[["id"]], df$id)
+  expect_equal(case_assign(df, seed = seed)[["current_risk"]], df$current_risk)
+  expect_equal(case_assign(df, seed = seed)[["beta0"]], df$beta0)
+  expect_equal(case_assign(df, seed = seed)[["betaxs"]], df$betaxs)
+  expect_equal(case_assign(df, seed = seed)[["hid_status"]], df$hid_status)
+  expect_equal(case_assign(df, seed = seed)[["presymp_days"]], df$presymp_days)
+  expect_equal(case_assign(df, seed = seed)[["symp_days"]], df$symp_days)
+  expect_equal(case_assign(df, seed = seed)[["status"]], df$status)
+  expect_equal(case_assign(df, seed = seed)[["probability"]], df$probability)
 })
 
 
@@ -174,21 +177,23 @@ test_that("infection_length works", {
              probability = runif(10, 0, 1),
              sympt_risk = runif(10, 0, 1))
 
+  seed = sample(1:100, 1)
+  
   timestep <- 1
 
-  expect_type(infection_length(df), "list")
+  expect_type(infection_length(df, seed = seed), "list")
 
-  expect_true(all(infection_length(df)[["new_status"]] >= df$new_status))
-  expect_true(all(infection_length(df)[["new_status"]] >= df$status))
+  expect_true(all(infection_length(df, seed = seed)[["new_status"]] >= df$new_status))
+  expect_true(all(infection_length(df, seed = seed)[["new_status"]] >= df$status))
 
-  expect_equal(infection_length(df)[["id"]], df$id)
-  expect_equal(infection_length(df)[["current_risk"]], df$current_risk)
-  expect_equal(infection_length(df)[["beta0"]], df$beta0)
-  expect_equal(infection_length(df)[["betaxs"]], df$betaxs)
-  expect_equal(infection_length(df)[["hid_status"]], df$hid_status)
-  expect_equal(infection_length(df)[["status"]], df$status)
-  expect_equal(infection_length(df)[["probability"]], df$probability)
-  expect_equal(sum(infection_length(df)[["symp_days"]] >0) - sum(df$symp_days > 0),sum(df$status == 0 & df$new_status == 1))
+  expect_equal(infection_length(df, seed = seed)[["id"]], df$id)
+  expect_equal(infection_length(df, seed = seed)[["current_risk"]], df$current_risk)
+  expect_equal(infection_length(df, seed = seed)[["beta0"]], df$beta0)
+  expect_equal(infection_length(df, seed = seed)[["betaxs"]], df$betaxs)
+  expect_equal(infection_length(df, seed = seed)[["hid_status"]], df$hid_status)
+  expect_equal(infection_length(df, seed = seed)[["status"]], df$status)
+  expect_equal(infection_length(df, seed = seed)[["probability"]], df$probability)
+  expect_equal(sum(infection_length(df, seed = seed)[["symp_days"]] >0) - sum(df$symp_days > 0),sum(df$status == 0 & df$new_status == 1))
 
 })
 
@@ -205,10 +210,12 @@ test_that("removed works", {
              status = c(rep(0,5), rep(2, 5)),
              new_status =c(rep(0,5), rep(2, 5)),
              probability = runif(10, 0, 1))
+  
+  seed = sample(1:100, 1)
   timestep <- 1
-  expect_type(removed(df), "list")
+  expect_type(removed(df, seed = seed), "list")
 
-  expect_true(all(removed(df)[["new_status"]] >= df$status))
+  expect_true(all(removed(df, seed = seed)[["new_status"]] >= df$status))
 
 })
 
@@ -223,7 +230,9 @@ test_that("removed_age works", {
              new_status =c(rep(3,50), rep(4, 50)),
              mortality_risk = runif(100, 0, 0.2))
   
-  expect_true(all(removed_age(df)[["new_status"]] >= df$status))
+  seed = sample(1:100, 1)
+  
+  expect_true(all(removed_age(df, seed = seed)[["new_status"]] >= df$status))
 })
 
 
@@ -258,6 +267,7 @@ test_that("run_removal_recalc works", {
              status = c(rep(0,5), rep(2, 5)),
              new_status =c(rep(0,5), rep(2, 5)),
              probability = runif(10, 0, 1))
+  
   timestep <- 1
 
   expect_true(all(run_removal_recalc(df, chance_recovery = 0.95)[["new_status"]] >= df$new_status))
@@ -281,3 +291,4 @@ test_that("exp_cdf works", {
   expect_lte(max(exp_cdf(rexp(10000, 5), dt = 1)), 1)
   expect_gte(min(exp_cdf(rexp(10000, 5), dt = 1)), 0)
 })
+
