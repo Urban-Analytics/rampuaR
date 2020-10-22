@@ -4,7 +4,7 @@
 \alias{rank_assign}
 \title{Assign COVID cases by ranking individuals current risk}
 \usage{
-rank_assign(df, daily_case)
+rank_assign(df, daily_case, seed)
 }
 \arguments{
 \item{df}{Input list of the model - output of covid_prob function}

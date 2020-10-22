@@ -364,6 +364,7 @@ case_assign <- function(df,
 #'
 #' @param df Input list of the model - output of covid_prob function
 #' @param daily_case The desired number of cases that should be assigned on this day
+#' @importFrom withr with_seed
 #' @return An updated version of the in put list with new rank assigned cases
 #' added
 #' @export
@@ -400,6 +401,7 @@ rank_assign <- function(df,
 #' @param infection_dist The distribution of the length of the symptomatic stage
 #' @param infection_mean The mean length of the symptomatic stage
 #' @param infection_sd The standard deviation of the length of the symptomatic stage
+#' @importFrom withr with_seed
 #' @return An updated version of the input list with the new cases having
 #' infection lengths assigned
 #' @export
