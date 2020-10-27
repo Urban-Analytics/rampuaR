@@ -332,7 +332,7 @@ covid_prob <- function(df){
 case_assign <- function(df, 
                         tmp.dir = getwd(), 
                         save_output = TRUE,
-                        seed){
+                        seed = NULL){
 
   susceptible <- which(df$status == 0)
 
@@ -372,7 +372,7 @@ case_assign <- function(df,
 #' @export
 rank_assign <- function(df, 
                         daily_case,
-                        seed){
+                        seed = NULL){
   
   dfw <- data.frame(id = df$id, current_risk = df$current_risk, status = df$status)
   dfw <- dfw[dfw$status == 0,]
@@ -417,7 +417,7 @@ infection_length <- function(df, exposed_dist = "weibull",
                              infection_dist = "normal",
                              infection_mean = 14,
                              infection_sd = 2,
-                             seed){
+                             seed = NULL){
   
   susceptible <- which(df$status == 0)
   
@@ -514,7 +514,7 @@ infection_length <- function(df, exposed_dist = "weibull",
 #' @export
 removed <- function(df,
                     chance_recovery = 0.95,
-                    seed){
+                    seed = NULL){
 
   removed_cases_symp <- which(df$exposed_days == 0 & df$presymp_days == 0 & df$symp_days == 1 & 
                            (df$status == 3 | df$new_status == 3))
@@ -544,7 +544,7 @@ removed <- function(df,
 #' in their last day of being symptomatic/asymptomatic
 #' @export
 removed_age <- function(df,
-                        seed){
+                        seed = NULL){
   
 
       removed_cases_symp <- which(df$exposed_days == 0 & df$presymp_days == 0 & df$symp_days == 1 
@@ -588,7 +588,7 @@ recalc_sympdays <- function(df){
 #' @export
 run_removal_recalc <- function(df, 
                                chance_recovery = 0.95, 
-                               seed = seed){
+                               seed = NULL){
   df_tmp <- removed(df, chance_recovery = chance_recovery, seed = seed)
   df_tmp <- recalc_sympdays(df_tmp)
   return(df_tmp)
