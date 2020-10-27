@@ -4,7 +4,7 @@
 \alias{removed_age}
 \title{Removes cases based on age}
 \usage{
-removed_age(df, seed)
+removed_age(df, seed = NULL)
 }
 \arguments{
 \item{df}{Input list of the function - output of the infection_length function.

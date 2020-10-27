@@ -4,7 +4,7 @@
 \alias{run_removal_recalc}
 \title{Runs the pipeline for removing cases and stepping symptomatic and presymptomatic days}
 \usage{
-run_removal_recalc(df, chance_recovery = 0.95, seed = seed)
+run_removal_recalc(df, chance_recovery = 0.95, seed = NULL)
 }
 \arguments{
 \item{df}{Input list of the function - output of the infection_length function}

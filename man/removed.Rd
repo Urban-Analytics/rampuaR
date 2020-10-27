@@ -4,7 +4,7 @@
 \alias{removed}
 \title{Removes cases}
 \usage{
-removed(df, chance_recovery = 0.95, seed)
+removed(df, chance_recovery = 0.95, seed = NULL)
 }
 \arguments{
 \item{df}{Input list of the function - output of the infection_length function}

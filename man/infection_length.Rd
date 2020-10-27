@@ -15,7 +15,7 @@ infection_length(
   infection_dist = "normal",
   infection_mean = 14,
   infection_sd = 2,
-  seed
+  seed = NULL
 )
 }
 \arguments{
