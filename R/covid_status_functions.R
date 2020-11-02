@@ -84,7 +84,7 @@ mortality_risk <- function(df,
                            bloodpressure = NULL){
 
   df$mortality_risk <- case_when(df$age >= 0 & df$age <= 4 ~ 0,
-                                 df$age >= 5 & df$age <= 9 ~ 0.0001
+                                 df$age >= 5 & df$age <= 9 ~ 0.0001,
                                  df$age >= 10 & df$age <= 14 ~ 0.0001,
                                  df$age >= 15 & df$age <= 19 ~ 0.0002,
                                  df$age >= 20 & df$age <= 24 ~ 0.0003,
