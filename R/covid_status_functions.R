@@ -148,7 +148,7 @@ age_symp_risk <- function(age){
   }
   
   if(age >=20 & age<= 69){
-    sympt_risk <- 0.21 + age_prob*(age-19)
+    sympt_risk <- 0.45
   }
   
   if(age > 69){
