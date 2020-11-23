@@ -610,7 +610,6 @@ run_removal_recalc <- function(df,
 #' @param df Input list of the population - output of the recalc_sympdays function
 #' @return An updated population with approx 39% of the population vaccinated.
 #' @export
-
 vaccinate <- function(df){
   
   min_ages <- c(18, 25, 35, 45, 55, 64)
