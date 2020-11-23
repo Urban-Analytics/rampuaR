@@ -140,7 +140,7 @@ mortality_risk <- function(df,
 #' @export
 age_symp_risk <- function(age){
   
-  age_prob <- diff(approx(y = c(0.21, 0.69), x = c(19, 70), xout = 19:70)$y)[1] ##https://www.nature.com/articles/s41591-020-0962-9
+  #age_prob <- diff(approx(y = c(0.21, 0.69), x = c(19, 70), xout = 19:70)$y)[1] ##https://www.nature.com/articles/s41591-020-0962-9
   #figure 3a
   
   if (age < 20){
@@ -603,6 +603,32 @@ run_removal_recalc <- function(df,
   df_tmp <- recalc_sympdays(df_tmp)
   return(df_tmp)
 }
+
+
+#' Vaccinate individuals on a given day according to the SMARTline flu jab survey
+#' 
+#' @param df Input list of the population - output of the recalc_sympdays function
+#' @return An updated population with approx 39% of the population vaccinated.
+#' @export
+
+vaccinate <- function(df){
+  
+  min_ages <- c(18, 25, 35, 45, 55, 64)
+  max_ages <- c(24, 34, 44, 54, 64, 120)
+  prop_vacc <- c(0.39, 0.21, 0.24, 0.30, 0.37, 0.79)
+  
+  for (i in 1:length(min_ages)){
+    age_gr <- which(df$age >= min_ages[i] & df$age <=  max_ages[i])
+    vac_age_gr <- which(rbinom(length(age_gr),1, prop_vacc[i]) == 1)
+    df$new_status[age_gr[vac_age_gr]][df$new_status[age_gr[vac_age_gr]] %in% c(0,5)] <- 5
+    df$exposed_days[which(df$new_status == 5)]<- 0
+    df$presymp_days[which(df$new_status == 5)] <- 0
+    df$symp_days[which(df$new_status == 5)] <- 0
+  }
+  return(df)
+}
+
+
 
 
 #' Changing the spread of values to be between two set values
