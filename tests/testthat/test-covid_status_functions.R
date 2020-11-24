@@ -294,3 +294,63 @@ test_that("exp_cdf works", {
   expect_gte(min(exp_cdf(rexp(10000, 5), dt = 1)), 0)
 })
 
+
+test_that("infection prob works", {
+  
+  df <- data.frame(beta0 = rep(0, 100),
+                   betaxs = rexp(100, 1),
+                   status = rep(0, 100),
+                   probability = NA)
+  
+  expect_lte(sum(infection_prob(df, dt = 1)[["probability"]]), nrow(df))
+  expect_equal(sum(infection_prob(df, dt = 1)[["status"]]), sum(df$status))
+  expect_equal(sum(infection_prob(df, dt = 1)[["betaxs"]]), sum(df$betaxs))
+  expect_equal(sum(infection_prob(df, dt = 1)[["beta0"]]), sum(df$beta0))
+  
+})
+
+
+
+test_that("vaccinate works",{
+  
+  df <- data.frame(age = sample(1:100, 100, replace = TRUE),
+                   new_status = rep(0,100),
+                   exposed_days = sample(0:3, 100, replace = TRUE),
+                   presymp_days = sample(0:3, 100, replace = TRUE),
+                   symp_days = sample(0:7,100, replace = TRUE))
+
+  expect_gte(sum(vaccinate(df)[["new_status"]]),sum(df$new_status))  
+  
+  
+})
+
+test_that("age_symp_risk works", {
+  
+  age <- c(10, 40, 70)
+  
+  expect_equal(age_symp_risk(age[1]), 0.21)
+  expect_equal(age_symp_risk(age[2]), 0.45)
+  expect_equal(age_symp_risk(age[3]), 0.69)
+
+    })
+
+test_that("sympt_risk works", {
+  
+  df <- data.frame(age = sample(1:100, 100, replace = TRUE),
+                   sympt_risk = NA,
+                   BMIvg6 = sample(c("Underweight: less than 18.5",
+                                     "Normal: 18.5 to less than 25",
+                                     "Not applicable",
+                                     "Obese I: 30 to less than 35",
+                                     "Obese II: 35 to less than 40",
+                                     "Obese III: 40 or more",
+                                     "Overweight: 25 to less than 30"), 100, replace = TRUE),
+                   diabetes = rbinom(100, 1, 0.1),
+                   bloodpressure = rbinom(100, 1, 0.1),
+                   cvd = rbinom(100, 1, 0.1))
+
+  expect_gte(sum(sympt_risk(df)[["sympt_risk"]]), 0)  
+  
+})
+
+
